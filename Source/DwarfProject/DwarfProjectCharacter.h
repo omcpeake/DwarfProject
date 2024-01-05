@@ -48,6 +48,19 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DashAction;
 
+	/** Attack Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AttackAction;
+
+
+	//Custom Properties
+	//Unit Stats
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float MaxHealth;
+
 public:
 	ADwarfProjectCharacter();
 	
@@ -61,6 +74,8 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void Dash(const FInputActionValue& Value);
+
+	void Attack(const FInputActionValue& Value);
 			
 
 protected:

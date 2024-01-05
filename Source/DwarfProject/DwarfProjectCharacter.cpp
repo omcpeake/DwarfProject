@@ -89,6 +89,9 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		//Dashing
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Dash);
+
+		//Attacking
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Attack);
 	}
 	else
 	{
@@ -134,4 +137,9 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 {		
+}
+
+void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
+{
+	AActor::Destroy();
 }
