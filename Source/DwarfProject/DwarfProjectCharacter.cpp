@@ -141,5 +141,8 @@ void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
-	AActor::Destroy();
+	if (Attack1Montage)
+	{
+		PlayAnimMontage(Attack1Montage);
+	}
 }

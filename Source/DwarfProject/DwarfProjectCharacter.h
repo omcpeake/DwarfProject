@@ -61,6 +61,10 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
 
+	//Attack Animations
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* Attack1Montage;
+
 public:
 	ADwarfProjectCharacter();
 	
