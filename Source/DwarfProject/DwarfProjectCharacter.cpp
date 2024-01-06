@@ -67,6 +67,8 @@ void ADwarfProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	AttackCount = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,7 +144,7 @@ void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
 	UAnimMontage* CurrentAttack = nullptr;
-	if (AttackCount==1)
+	if (AttackCount == 1)
 	{
 		CurrentAttack = Attack1Montage;
 	}
@@ -160,7 +162,11 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 	{
 		PlayAnimMontage(CurrentAttack);
 		AttackCount++;
+		UE_LOG(LogTemplateCharacter, Log, TEXT("'%s' Playing Attack Montage '%s'"), *GetNameSafe(this), *CurrentAttack->GetName());
+
 	}
+
+	
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
