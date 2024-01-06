@@ -141,8 +141,30 @@ void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
-	if (Attack1Montage)
+	UAnimMontage* CurrentAttack = nullptr;
+	if (AttackCount==1)
 	{
-		PlayAnimMontage(Attack1Montage);
+		CurrentAttack = Attack1Montage;
 	}
+	else if (AttackCount == 2)
+	{
+		CurrentAttack = Attack2Montage;
+	}
+	else if (AttackCount == 3)
+	{
+		CurrentAttack = Attack3Montage;
+		AttackCount = 0;
+	}
+	//verify if the attack is not null
+	if (CurrentAttack)
+	{
+		PlayAnimMontage(CurrentAttack);
+		AttackCount++;
+	}
+	else
+	{
+		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
+	}
+	
+	
 }
