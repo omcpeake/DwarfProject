@@ -68,7 +68,7 @@ void ADwarfProjectCharacter::BeginPlay()
 		}
 	}
 
-	AttackCount = 0;
+	AttackCount = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,12 +143,10 @@ void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
-	UAnimMontage* CurrentAttack = nullptr;
-	if (AttackCount == 1)
-	{
-		CurrentAttack = Attack1Montage;
-	}
-	else if (AttackCount == 2)
+	// use attack 1 by default
+	UAnimMontage* CurrentAttack = Attack1Montage;
+
+	if (AttackCount == 2)
 	{
 		CurrentAttack = Attack2Montage;
 	}
@@ -157,20 +155,19 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 		CurrentAttack = Attack3Montage;
 		AttackCount = 0;
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%i = attackcount"), AttackCount));
 	//verify if the attack is not null
 	if (CurrentAttack)
 	{
 		PlayAnimMontage(CurrentAttack);
 		AttackCount++;
-		UE_LOG(LogTemplateCharacter, Log, TEXT("'%s' Playing Attack Montage '%s'"), *GetNameSafe(this), *CurrentAttack->GetName());
-
+		
 	}
-
-	
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
 	}
+	
 	
 	
 }
