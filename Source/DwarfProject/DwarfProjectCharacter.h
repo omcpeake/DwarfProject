@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "WeaponBase.h"
 #include "DwarfProjectCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,6 +15,7 @@ class UInputAction;
 struct FInputActionValue;
 
 class UAnimMontage;
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -59,22 +61,30 @@ class ADwarfProjectCharacter : public ACharacter
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float Health;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseAttack;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack1Montage;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack2Montage;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack3Montage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UStaticMesh* Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	FName WeaponSocketName;
+
+	// Use TSubclassOf to determine the base type of the Actor you want to spawn.
+	// You can expose the variable to the editor with UPROPERTY()
+	// You can also get the class type of any object with its StaticClass() function
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeaponBase> MyActorClass = AWeaponBase::StaticClass();
 
 protected:
 	//counts the number of attacks for selecting animation
@@ -95,6 +105,8 @@ protected:
 	void Dash(const FInputActionValue& Value);
 
 	void Attack(const FInputActionValue& Value);
+
+	void AttachWeapon();
 			
 
 protected:
