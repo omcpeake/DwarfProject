@@ -67,8 +67,11 @@ void ADwarfProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
-	AttachWeapon();
+	if(HasWeapon==true)
+	{ 
+		AttachWeapon();
+	}
+	
 	
 	AttackCount = 1;
 
@@ -175,7 +178,6 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 }
 
 
-
 void ADwarfProjectCharacter::AttachWeapon()
 {
 	// You should ensure the Actor class is valid before spawning,
@@ -195,19 +197,35 @@ void ADwarfProjectCharacter::AttachWeapon()
 			// NOTE: depending on your Actor settings, this could prevent spawning if the location is obstructed!
 			FTransform SpawnTransform = GetActorTransform();
 
-			FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName, RTS_World);
+			//FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName, RTS_World);
 
 			// Use UWorld->SpawnActor<>() to spawn.
 			// It will return a cast pointer of the Actor type you specified.
 			// There's several variants of the function that allow extra customization.
 			// Here we just pass the Actor class for reflection support, and the transform.
-			AWeaponBase* SpawnedActor = MyLevel->SpawnActor<AWeaponBase>(MyActorClass, SocketTransform);
+			AWeaponBase* SpawnedActor = MyLevel->SpawnActor<AWeaponBase>(MyActorClass, SpawnTransform);
 
 			// You should validate the actor pointer before accessing it in case the Spawn failed.
 			if (IsValid(SpawnedActor))
 			{
 				UE_LOG(LogTemp, Log, TEXT("Spawned successfully! New Actor: %s"), *SpawnedActor->GetName());
+				SpawnedActor->SetOwner(this);
+				//SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+				//SpawnedActor->AddComponent(TEXT("Static Mesh"), false, SpawnTransform, WeaponMesh, true);
+				SpawnedActor->UpdateWeaponMesh(WeaponMesh);
+
+
+
+				
 			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Spawn failed!"));
+			}
+			
+			
+
+			
 		}
 	}
 	
