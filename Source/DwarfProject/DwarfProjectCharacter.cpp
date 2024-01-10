@@ -210,7 +210,8 @@ void ADwarfProjectCharacter::AttachWeapon()
 			{
 				UE_LOG(LogTemp, Log, TEXT("Spawned successfully! New Actor: %s"), *SpawnedActor->GetName());
 				SpawnedActor->SetOwner(this);
-				//SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+				SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+				SpawnedActor->SetActorEnableCollision(false);
 				//SpawnedActor->AddComponent(TEXT("Static Mesh"), false, SpawnTransform, WeaponMesh, true);
 				SpawnedActor->UpdateWeaponMesh(WeaponMesh);
 
