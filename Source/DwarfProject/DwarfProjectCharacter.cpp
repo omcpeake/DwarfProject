@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,6 +53,8 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("DwarfProjectCharacter"));
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -71,13 +74,14 @@ void ADwarfProjectCharacter::BeginPlay()
 	{ 
 		AttachWeapon();
 	}
-	
+	//TODO if saves are added then save the current health to that
+	CurrentHealth = MaxHealth;
 	
 	AttackCount = 1;
 
-	//UWorld::SpawnActor<AActor>();
-	//GetMesh()->GetSocketTransform(WeaponSocketName, RTS_World);
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -164,7 +168,7 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 		AttackCount = 0;
 	}
 	//verify that the attack is not null
-	if (CurrentAttack)
+	if (IsValid(CurrentAttack))
 	{
 		PlayAnimMontage(CurrentAttack);
 		AttackCount++;
@@ -176,7 +180,6 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 	}	
 	
 }
-
 
 void ADwarfProjectCharacter::AttachWeapon()
 {
@@ -207,19 +210,36 @@ void ADwarfProjectCharacter::AttachWeapon()
 				UE_LOG(LogTemp, Log, TEXT("Spawned successfully! New Actor: %s"), *SpawnedActor->GetName());
 				SpawnedActor->SetOwner(this);
 				SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-				SpawnedActor->SetActorEnableCollision(false);
+				//SpawnedActor->SetActorEnableCollision(false);
 				SpawnedActor->UpdateWeaponMesh(WeaponMesh);
 
 			}
 			else
 			{
 				UE_LOG(LogTemp, Error, TEXT("Spawn failed!"));
-			}
-			
-			
-
-			
+			}				
 		}
-	}
+	}	
+}
+
+float ADwarfProjectCharacter::GetBaseDamage()
+{
+	return BaseDamage;
+}
+
+
+void ADwarfProjectCharacter::RecieveDamage(float Damage)
+{
+	CurrentHealth -= Damage;
+}
+
+void ADwarfProjectCharacter::DetectHit()
+{
+	//UKismetSystemLibrary::SphereTraceSingleForObjects
+}
+
+void ADwarfProjectCharacter::DashForward(float DashAmount)
+{
+	LaunchCharacter(GetActorForwardVector() * DashAmount, false, false);
 	
 }

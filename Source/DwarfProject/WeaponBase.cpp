@@ -12,6 +12,7 @@ AWeaponBase::AWeaponBase()
 	//Root component
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMesh;
+	SetActorEnableCollision(false);
 		
 
 }

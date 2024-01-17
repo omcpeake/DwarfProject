@@ -17,6 +17,7 @@ struct FInputActionValue;
 class UAnimMontage;
 
 
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -60,11 +61,9 @@ class ADwarfProjectCharacter : public ACharacter
 	//Custom Properties
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
-	float Health;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
-	float BaseAttack;
+	float BaseDamage;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -90,6 +89,7 @@ class ADwarfProjectCharacter : public ACharacter
 	TSubclassOf<AWeaponBase> MyActorClass = AWeaponBase::StaticClass();
 
 protected:
+	float CurrentHealth;
 	//counts the number of attacks for selecting animation
 	int32 AttackCount;
 
@@ -124,5 +124,17 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+	//UFunctions
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	float GetBaseDamage();
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void RecieveDamage(float Damage);
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void DetectHit();
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void DashForward(float DashAmount);
+
 };
 
