@@ -110,6 +110,8 @@ protected:
 	void Attack(const FInputActionValue& Value);
 
 	void AttachWeapon();
+
+	void Die();
 			
 
 protected:
@@ -135,6 +137,7 @@ public:
 	void DetectHit();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void DashForward(float DashAmount);
+
 
 };
 

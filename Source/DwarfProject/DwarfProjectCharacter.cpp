@@ -189,8 +189,7 @@ void ADwarfProjectCharacter::AttachWeapon()
 		// We need a pointer to the level we want to spawn the Actor in. You can get the persistent level from any Actor or Component with GetWorld()
 		UWorld* MyLevel = GetWorld();
 
-		// You should ensure the level is valid before spawning, or you could crash the engine!
-		// This is important if your spawn code could run from the Editor by any reason.
+		// You should ensure the level is valid before spawning, or you could crash the engine! This is important if your spawn code could run from the Editor by any reason.
 		if (IsValid(MyLevel))
 		{
 			// You can determine the spawned Actor's initial location, rotation and scale.
@@ -198,10 +197,8 @@ void ADwarfProjectCharacter::AttachWeapon()
 			// NOTE: depending on your Actor settings, this could prevent spawning if the location is obstructed! //FTransform SpawnTransform = GetActorTransform();
 			FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName, RTS_World);
 
-			// Use UWorld->SpawnActor<>() to spawn.
-			// It will return a cast pointer of the Actor type you specified.
-			// There's several variants of the function that allow extra customization.
-			// Here we just pass the Actor class for reflection support, and the transform.
+			// Use UWorld->SpawnActor<>() to spawn. It will return a cast pointer of the Actor type you specified.
+			//  There's several variants of the function that allow extra customization. Here we just pass the Actor class for reflection support, and the transform.
 			AWeaponBase* SpawnedActor = MyLevel->SpawnActor<AWeaponBase>(MyActorClass, SocketTransform);
 
 			// You should validate the actor pointer before accessing it in case the Spawn failed.
@@ -231,6 +228,17 @@ float ADwarfProjectCharacter::GetBaseDamage()
 void ADwarfProjectCharacter::RecieveDamage(float Damage)
 {
 	CurrentHealth -= Damage;
+	if (CurrentHealth <= 0)
+	{
+		CurrentHealth = 0;
+		Die();
+	}
+}
+
+void ADwarfProjectCharacter::Die()
+{
+	//TODO: Play death animation
+	Destroy();
 }
 
 void ADwarfProjectCharacter::DetectHit()
@@ -243,3 +251,5 @@ void ADwarfProjectCharacter::DashForward(float DashAmount)
 	LaunchCharacter(GetActorForwardVector() * DashAmount, false, false);
 	
 }
+
+
