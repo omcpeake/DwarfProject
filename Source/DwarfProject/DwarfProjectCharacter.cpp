@@ -21,6 +21,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("DwarfProjectCharacter"));
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -54,7 +55,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("DwarfProjectCharacter"));
+	
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -151,6 +152,7 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 {		
+	DashForward(DashVal);
 }
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
@@ -209,7 +211,6 @@ void ADwarfProjectCharacter::AttachWeapon()
 				SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 				//SpawnedActor->SetActorEnableCollision(false);
 				SpawnedActor->UpdateWeaponMesh(WeaponMesh);
-
 			}
 			else
 			{
@@ -243,7 +244,28 @@ void ADwarfProjectCharacter::Die()
 
 void ADwarfProjectCharacter::DetectHit()
 {
-	//UKismetSystemLibrary::SphereTraceSingleForObjects
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams(NAME_None, false, this);
+	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 100,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(50),
+		QueryParams);
+
+	if (bHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
+		if (HitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
+			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
+			Target->RecieveDamage(GetBaseDamage());
+		}
+
+	}
+
 }
 
 void ADwarfProjectCharacter::DashForward(float DashAmount)

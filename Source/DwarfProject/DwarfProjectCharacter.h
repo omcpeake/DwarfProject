@@ -73,14 +73,17 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack3Montage;
 
+	//Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	bool HasWeapon;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UStaticMesh* WeaponMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	FName WeaponSocketName;
+
+	//Dash Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	float DashVal;
 
 	// Use TSubclassOf to determine the base type of the Actor you want to spawn.
 	// You can expose the variable to the editor with UPROPERTY()
