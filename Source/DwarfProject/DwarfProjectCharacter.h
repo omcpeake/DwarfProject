@@ -64,6 +64,9 @@ class ADwarfProjectCharacter : public ACharacter
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	bool CanAttack;
+	bool MovementDisabled;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -140,6 +143,8 @@ public:
 	void DetectHit();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void DashForward(float DashAmount);
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void AttackEnd();
 
 
 };

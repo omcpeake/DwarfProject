@@ -79,6 +79,8 @@ void ADwarfProjectCharacter::BeginPlay()
 	CurrentHealth = MaxHealth;
 	
 	AttackCount = 1;
+	CanAttack = true;
+	MovementDisabled = false;
 
 }
 
@@ -157,29 +159,34 @@ void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
-	// use attack 1 by default
-	UAnimMontage* CurrentAttack = Attack1Montage;
-
-	if (AttackCount == 2)
+	//Only attack if the player is not already attacking
+	if (CanAttack)
 	{
-		CurrentAttack = Attack2Montage;
+		MovementDisabled = true;
+		// use attack 1 by default
+		UAnimMontage* CurrentAttack = Attack1Montage;
+		if (AttackCount == 2)
+		{
+			CurrentAttack = Attack2Montage;
+		}
+		else if (AttackCount == 3)
+		{
+			CurrentAttack = Attack3Montage;
+			AttackCount = 0;
+		}
+		//verify that the attack is not null
+		if (IsValid(CurrentAttack))
+		{
+			PlayAnimMontage(CurrentAttack);
+			AttackCount++;
+			CanAttack = false;
+		}
+		else
+		{
+			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
+		}
 	}
-	else if (AttackCount == 3)
-	{
-		CurrentAttack = Attack3Montage;
-		AttackCount = 0;
-	}
-	//verify that the attack is not null
-	if (IsValid(CurrentAttack))
-	{
-		PlayAnimMontage(CurrentAttack);
-		AttackCount++;
 		
-	}
-	else
-	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
-	}	
 	
 }
 
@@ -272,6 +279,12 @@ void ADwarfProjectCharacter::DashForward(float DashAmount)
 {
 	LaunchCharacter(GetActorForwardVector() * DashAmount, false, false);
 	
+}
+
+void ADwarfProjectCharacter::AttackEnd()
+{
+	CanAttack = true;
+	MovementDisabled = false;
 }
 
 
