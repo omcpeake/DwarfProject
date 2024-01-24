@@ -70,6 +70,8 @@ class ADwarfProjectCharacter : public ACharacter
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float AttackRadius;
 
 	bool CanAttack;
 	bool CanDodge;

@@ -163,23 +163,6 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
-{		
-	//TODO - play roll animation and disable movement
-	if (CanDodge)
-	{
-		MovementDisabled = true;
-		if (IsValid(DodgeRollMontage))
-		{
-			PlayAnimMontage(DodgeRollMontage);
-		}
-		
-		DashForward(DashVal);
-		IsInvincible = true;
-		CanDodge = false;
-	}
-
-}
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
@@ -200,24 +183,39 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 		}
 		//verify that the attack is not null
 		if (IsValid(CurrentAttack))
-		{
+		{			
 			DashForward(AttackDashVal);
 			PlayAnimMontage(CurrentAttack);			
 			AttackCount++;
 			CanAttack = false;
+			CanDodge = false;
 		}
 		else
 		{
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
 		}
+	}	
+}
+
+void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
+{
+	if (CanDodge)
+	{
+		MovementDisabled = true;
+		if (IsValid(DodgeRollMontage))
+		{
+			PlayAnimMontage(DodgeRollMontage);
+		}
+		DashForward(DashVal);
+		IsInvincible = true;
+		CanDodge = false;
+		CanAttack = false;
 	}
-		
-	
 }
 
 void ADwarfProjectCharacter::SpinAttack(const FInputActionValue& Value)
 {
-	//TODO add spin attack
+	PlayAnimMontage(SpinAttackMontage);
 }
 
 void ADwarfProjectCharacter::AttachWeapon()
@@ -295,6 +293,7 @@ void ADwarfProjectCharacter::Die()
 
 void ADwarfProjectCharacter::DetectHit()
 {
+	//https://medium.com/@coderfromnineteen/unreal-from-zero-to-hero-10-collision-detection-and-damage-5b9934af1029
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams(NAME_None, false, this);
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
@@ -302,7 +301,7 @@ void ADwarfProjectCharacter::DetectHit()
 		GetActorLocation() + GetActorForwardVector() * 100,
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(50),
+		FCollisionShape::MakeSphere(AttackRadius),
 		QueryParams);
 
 	if (bHit)
@@ -326,19 +325,21 @@ void ADwarfProjectCharacter::DetectHit()
 
 void ADwarfProjectCharacter::DashForward(float DashAmount)
 {
-	LaunchCharacter(GetActorForwardVector() * DashAmount, false, false);
-	
+	//Moves the target forward by the amount specified
+	LaunchCharacter(GetActorForwardVector() * DashAmount, false, false);	
 }
 
 void ADwarfProjectCharacter::AttackEnd()
 {
 	CanAttack = true;
+	CanDodge = true;
 	MovementDisabled = false;
 }
 
 void ADwarfProjectCharacter::DodgeEnd()
 {
 	CanDodge = true;
+	CanAttack = true;
 	MovementDisabled = false;
 	IsInvincible = false;
 }
