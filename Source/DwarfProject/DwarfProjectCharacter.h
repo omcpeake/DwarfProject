@@ -51,22 +51,30 @@ class ADwarfProjectCharacter : public ACharacter
 
 	/** Dash Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* DashAction;
+	UInputAction* DodgeRollAction;
 
 	/** Attack Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
+	/** Spin ATtack Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SpinAttackAction;
+
 
 	//Custom Properties
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	bool IsHostile;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+
 	bool CanAttack;
+	bool CanDodge;
 	bool MovementDisabled;
+	bool IsInvincible;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -75,6 +83,11 @@ class ADwarfProjectCharacter : public ACharacter
 	UAnimMontage* Attack2Montage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack3Montage;
+	float AttackDashVal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DodgeRollMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* SpinAttackMontage;
 
 	//Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
@@ -111,9 +124,11 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
-	void Dash(const FInputActionValue& Value);
+	void DodgeRoll(const FInputActionValue& Value);
 
 	void Attack(const FInputActionValue& Value);
+
+	void SpinAttack(const FInputActionValue& Value);
 
 	void AttachWeapon();
 
@@ -145,6 +160,13 @@ public:
 	void DashForward(float DashAmount);
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void AttackEnd();
+	UFUNCTION(BlueprintCallable, Category = "Dodge")
+	void DodgeEnd();
+	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
+	bool GetIsInvincible();
+	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
+	bool GetIsHostile();
+	
 
 
 };

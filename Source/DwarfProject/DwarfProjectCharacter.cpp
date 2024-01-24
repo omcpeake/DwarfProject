@@ -55,7 +55,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	
+	AttackDashVal = 500.0f;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -78,9 +78,12 @@ void ADwarfProjectCharacter::BeginPlay()
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
 	
+	//Setup checks
 	AttackCount = 1;
 	CanAttack = true;
+	CanDodge = true;
 	MovementDisabled = false;
+	IsInvincible = false;
 
 }
 
@@ -105,10 +108,13 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADwarfProjectCharacter::Look);
 
 		//Dashing
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Dash);
-
+		EnhancedInputComponent->BindAction(DodgeRollAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::DodgeRoll);
+			
 		//Attacking
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Attack);
+
+		//Spin Attacking
+		EnhancedInputComponent->BindAction(SpinAttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::SpinAttack);
 	}
 	else
 	{
@@ -118,25 +124,30 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 void ADwarfProjectCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
+	//if movement is disabled then don't move
+	if (MovementDisabled == false)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		// input is a Vector2D
+		FVector2D MovementVector = Value.Get<FVector2D>();
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		if (Controller != nullptr)
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+			// add movement 
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
 	}
+	
 }
 
 void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
@@ -152,9 +163,22 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ADwarfProjectCharacter::Dash(const FInputActionValue& Value)
+void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 {		
-	DashForward(DashVal);
+	//TODO - play roll animation and disable movement
+	if (CanDodge)
+	{
+		MovementDisabled = true;
+		if (IsValid(DodgeRollMontage))
+		{
+			PlayAnimMontage(DodgeRollMontage);
+		}
+		
+		DashForward(DashVal);
+		IsInvincible = true;
+		CanDodge = false;
+	}
+
 }
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
@@ -177,7 +201,8 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 		//verify that the attack is not null
 		if (IsValid(CurrentAttack))
 		{
-			PlayAnimMontage(CurrentAttack);
+			DashForward(AttackDashVal);
+			PlayAnimMontage(CurrentAttack);			
 			AttackCount++;
 			CanAttack = false;
 		}
@@ -188,6 +213,11 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 	}
 		
 	
+}
+
+void ADwarfProjectCharacter::SpinAttack(const FInputActionValue& Value)
+{
+	//TODO add spin attack
 }
 
 void ADwarfProjectCharacter::AttachWeapon()
@@ -232,15 +262,29 @@ float ADwarfProjectCharacter::GetBaseDamage()
 	return BaseDamage;
 }
 
+bool ADwarfProjectCharacter::GetIsHostile()
+{
+	return IsHostile;
+}
+
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage)
 {
-	CurrentHealth -= Damage;
-	if (CurrentHealth <= 0)
+	//Do not take damage if invincible
+	if (!IsInvincible)
 	{
-		CurrentHealth = 0;
-		Die();
+		CurrentHealth -= Damage;
+		if (CurrentHealth <= 0)
+		{
+			CurrentHealth = 0;
+			Die();
+		}
 	}
+	else
+	{
+		//TODO do stuff
+	}
+	
 }
 
 void ADwarfProjectCharacter::Die()
@@ -268,7 +312,12 @@ void ADwarfProjectCharacter::DetectHit()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
 			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
-			Target->RecieveDamage(GetBaseDamage());
+			//Check if target allignment is the same as ours, if so dont deal damage
+			if (IsHostile != Target->GetIsHostile())
+			{
+				Target->RecieveDamage(GetBaseDamage());
+			}
+			
 		}
 
 	}
@@ -285,6 +334,18 @@ void ADwarfProjectCharacter::AttackEnd()
 {
 	CanAttack = true;
 	MovementDisabled = false;
+}
+
+void ADwarfProjectCharacter::DodgeEnd()
+{
+	CanDodge = true;
+	MovementDisabled = false;
+	IsInvincible = false;
+}
+
+bool ADwarfProjectCharacter::GetIsInvincible()
+{
+	return IsInvincible;
 }
 
 
