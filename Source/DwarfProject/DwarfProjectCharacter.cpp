@@ -57,6 +57,19 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 
 	AttackDashVal = 500.0f;
 	AttackAnimResetTime = 1.5f;
+
+	//TODO if saves are added then save the current health to that
+	CurrentHealth = MaxHealth;
+
+	//Setup checks
+	AttackCount = 1;
+	CanAttack = true;
+	CanDodge = true;
+	CanParry = true;
+	MovementDisabled = false;
+	IsInvincible = false;
+	ParryActive = false;
+	ParryOnCooldown = false;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -72,23 +85,11 @@ void ADwarfProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	//If weapon is selected in blueprint then attach it here
 	if(HasWeapon==true)
 	{ 
 		AttachWeapon();
-	}
-	//TODO if saves are added then save the current health to that
-	CurrentHealth = MaxHealth;
-	
-	//Setup checks
-	AttackCount = 1;
-	CanAttack = true;
-	CanDodge = true;
-	CanParry = true;
-	MovementDisabled = false;
-	IsInvincible = false;
-	ParryActive = false;
-	ParryOnCooldown = false;
-
+	}	
 }
 
 
@@ -197,11 +198,11 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 			MovementDisabled = true;
 
 			AttackCount++;
-			
-			
+				
 			CanAttack = false;
 			CanDodge = false;
 			CanParry = false;
+
 			//Start the timer again at the end of the attack
 			GetWorld()->GetTimerManager().SetTimer(AttackAnimResetTimerHandle, this, &ADwarfProjectCharacter::ResetAttackCount, AttackAnimResetTime, false);
 		}
@@ -222,6 +223,7 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 			PlayAnimMontage(DodgeRollMontage);
 		}
 		DashForward(DashVal);
+
 		IsInvincible = true;
 		CanDodge = false;
 		CanAttack = false;
@@ -232,8 +234,7 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 {
 	if (CanParry)
-	{
-		
+	{		
 		if (IsValid(ParryMontage))
 		{
 			PlayAnimMontage(ParryMontage);
@@ -242,12 +243,10 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 		CanParry = false;
 		CanAttack = false;
 		CanDodge = false;
+
 		//Parry has a cooldown
 		GetWorld()->GetTimerManager().SetTimer(ParryCooldownTimerHandle, this, &ADwarfProjectCharacter::ParryCooldownEnd, ParryCooldown, false);
-	}
-
-	
-	
+	}	
 }
 
 void ADwarfProjectCharacter::AttachWeapon()
@@ -312,9 +311,8 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage)
 	}
 	else
 	{
-		//TODO do stuff
-	}
-	
+		//TODO do stuff, like play a sound or something
+	}	
 }
 
 void ADwarfProjectCharacter::Die()
@@ -348,7 +346,7 @@ void ADwarfProjectCharacter::DetectHit()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
 			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
-			//Check if target allignment is the same as ours, if so dont deal damage
+			//Check if target allignment is the same as ours, dont try to damage them
 			if (IsHostile != Target->GetIsHostile())
 			{
 				if (Target->ParryActive == false)
@@ -358,10 +356,9 @@ void ADwarfProjectCharacter::DetectHit()
 				}
 				else
 				{
-					//else half the damage yourself, idiot
+					//else take half the damage yourself, idiot
 					RecieveDamage(GetBaseDamage()/2);
-				}
-				
+				}				
 			}			
 		}
 	}
@@ -382,8 +379,7 @@ void ADwarfProjectCharacter::AttackEnd()
 	if (ParryOnCooldown == false)
 	{
 		CanParry = true;
-	}
-		
+	}		
 }
 
 void ADwarfProjectCharacter::DodgeEnd()
@@ -396,8 +392,7 @@ void ADwarfProjectCharacter::DodgeEnd()
 	if (ParryOnCooldown == false)
 	{
 		CanParry = true;
-	}
-		
+	}		
 }
 
 void ADwarfProjectCharacter::ParryEnd()
