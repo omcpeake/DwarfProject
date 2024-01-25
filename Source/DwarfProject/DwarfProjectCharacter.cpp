@@ -82,8 +82,11 @@ void ADwarfProjectCharacter::BeginPlay()
 	AttackCount = 1;
 	CanAttack = true;
 	CanDodge = true;
+	CanParry = true;
 	MovementDisabled = false;
 	IsInvincible = false;
+	ParryActive = false;
+	ParryOnCooldown = false;
 
 }
 
@@ -114,7 +117,7 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Attack);
 
 		//Spin Attacking
-		EnhancedInputComponent->BindAction(SpinAttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::SpinAttack);
+		EnhancedInputComponent->BindAction(SpinAttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Parry);
 	}
 	else
 	{
@@ -189,6 +192,7 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 			AttackCount++;
 			CanAttack = false;
 			CanDodge = false;
+			CanParry = false;
 		}
 		else
 		{
@@ -210,12 +214,29 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 		IsInvincible = true;
 		CanDodge = false;
 		CanAttack = false;
+		CanParry = false;
 	}
 }
 
-void ADwarfProjectCharacter::SpinAttack(const FInputActionValue& Value)
+void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 {
-	PlayAnimMontage(SpinAttackMontage);
+	if (CanParry)
+	{
+		
+		if (IsValid(ParryMontage))
+		{
+			PlayAnimMontage(ParryMontage);
+		}
+		ParryActive = true;
+		CanParry = false;
+		CanAttack = false;
+		CanDodge = false;
+		//Parry has a cooldown
+		GetWorld()->GetTimerManager().SetTimer(ParryCooldownTimerHandle, this, &ADwarfProjectCharacter::ParryCooldownEnd, ParryCooldown, false);
+	}
+
+	
+	
 }
 
 void ADwarfProjectCharacter::AttachWeapon()
@@ -314,13 +335,20 @@ void ADwarfProjectCharacter::DetectHit()
 			//Check if target allignment is the same as ours, if so dont deal damage
 			if (IsHostile != Target->GetIsHostile())
 			{
-				Target->RecieveDamage(GetBaseDamage());
-			}
-			
+				if (Target->ParryActive == false)
+				{
+					//if target is not parrying, deal damage
+					Target->RecieveDamage(GetBaseDamage());
+				}
+				else
+				{
+					//else half the damage yourself, idiot
+					RecieveDamage(GetBaseDamage()/2);
+				}
+				
+			}			
 		}
-
 	}
-
 }
 
 void ADwarfProjectCharacter::DashForward(float DashAmount)
@@ -334,6 +362,12 @@ void ADwarfProjectCharacter::AttackEnd()
 	CanAttack = true;
 	CanDodge = true;
 	MovementDisabled = false;
+	//Only enable parry if it is not on cooldown
+	if (ParryOnCooldown == false)
+	{
+		CanParry = true;
+	}
+		
 }
 
 void ADwarfProjectCharacter::DodgeEnd()
@@ -342,6 +376,26 @@ void ADwarfProjectCharacter::DodgeEnd()
 	CanAttack = true;
 	MovementDisabled = false;
 	IsInvincible = false;
+	//Only enable parry if it is not on cooldown
+	if (ParryOnCooldown == false)
+	{
+		CanParry = true;
+	}
+		
+}
+
+void ADwarfProjectCharacter::ParryEnd()
+{
+	ParryActive = false;
+	CanAttack = true;
+	CanDodge = true;
+	ParryOnCooldown = true;
+}
+
+void ADwarfProjectCharacter::ParryCooldownEnd()
+{
+	ParryOnCooldown = false;
+	CanParry = true;
 }
 
 bool ADwarfProjectCharacter::GetIsInvincible()

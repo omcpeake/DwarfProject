@@ -63,6 +63,15 @@ class ADwarfProjectCharacter : public ACharacter
 
 
 	//Custom Properties
+	bool CanAttack;
+	bool CanDodge;
+	bool CanParry;
+	bool ParryActive;
+	FTimerHandle ParryCooldownTimerHandle;
+	bool ParryOnCooldown;
+	bool MovementDisabled;
+	bool IsInvincible;
+
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	bool IsHostile;
@@ -72,11 +81,9 @@ class ADwarfProjectCharacter : public ACharacter
 	float BaseDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float AttackRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float ParryCooldown;
 
-	bool CanAttack;
-	bool CanDodge;
-	bool MovementDisabled;
-	bool IsInvincible;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -89,7 +96,7 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DodgeRollMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* SpinAttackMontage;
+	UAnimMontage* ParryMontage;
 
 	//Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
@@ -130,7 +137,7 @@ protected:
 
 	void Attack(const FInputActionValue& Value);
 
-	void SpinAttack(const FInputActionValue& Value);
+	void Parry(const FInputActionValue& Value);
 
 	void AttachWeapon();
 
@@ -164,6 +171,10 @@ public:
 	void AttackEnd();
 	UFUNCTION(BlueprintCallable, Category = "Dodge")
 	void DodgeEnd();
+	UFUNCTION(BlueprintCallable, Category = "Parry")
+	void ParryEnd();
+	UFUNCTION(BlueprintCallable, Category = "Parry")
+	void ParryCooldownEnd();
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
 	bool GetIsInvincible();
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
