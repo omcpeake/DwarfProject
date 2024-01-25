@@ -97,6 +97,8 @@ class ADwarfProjectCharacter : public ACharacter
 	UAnimMontage* DodgeRollMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ParryMontage;
+	FTimerHandle AttackAnimResetTimerHandle;
+	float AttackAnimResetTime;
 
 	//Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
@@ -142,6 +144,8 @@ protected:
 	void AttachWeapon();
 
 	void Die();
+
+	void ResetAttackCount();
 			
 
 protected:

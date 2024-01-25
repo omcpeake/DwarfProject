@@ -56,6 +56,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	AttackDashVal = 500.0f;
+	AttackAnimResetTime = 1.5f;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -172,7 +173,7 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 	//Only attack if the player is not already attacking
 	if (CanAttack)
 	{
-		MovementDisabled = true;
+		
 		// use attack 1 by default
 		UAnimMontage* CurrentAttack = Attack1Montage;
 		if (AttackCount == 2)
@@ -186,13 +187,23 @@ void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 		}
 		//verify that the attack is not null
 		if (IsValid(CurrentAttack))
-		{			
+		{	
+			//Timer to reset back to attack anim 1 after a certain amount of time of not attacking
+			//Reset the attack timer when we start attack
+			GetWorld()->GetTimerManager().ClearTimer(AttackAnimResetTimerHandle);
 			DashForward(AttackDashVal);
-			PlayAnimMontage(CurrentAttack);			
+			PlayAnimMontage(CurrentAttack);	
+			//cant change direction once attack has started
+			MovementDisabled = true;
+
 			AttackCount++;
+			
+			
 			CanAttack = false;
 			CanDodge = false;
 			CanParry = false;
+			//Start the timer again at the end of the attack
+			GetWorld()->GetTimerManager().SetTimer(AttackAnimResetTimerHandle, this, &ADwarfProjectCharacter::ResetAttackCount, AttackAnimResetTime, false);
 		}
 		else
 		{
@@ -310,6 +321,11 @@ void ADwarfProjectCharacter::Die()
 {
 	//TODO: Play death animation
 	Destroy();
+}
+
+void ADwarfProjectCharacter::ResetAttackCount()
+{
+	AttackCount = 1;
 }
 
 void ADwarfProjectCharacter::DetectHit()
