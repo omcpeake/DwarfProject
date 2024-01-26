@@ -233,6 +233,7 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 {
+	//TODO add add visual feedback for parry
 	if (CanParry)
 	{		
 		if (IsValid(ParryMontage))
