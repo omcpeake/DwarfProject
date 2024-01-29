@@ -58,8 +58,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	AttackDashVal = 500.0f;
 	AttackAnimResetTime = 1.5f;
 
-	//TODO if saves are added then save the current health to that
-	CurrentHealth = MaxHealth;
+	
 
 	//Setup checks
 	AttackCount = 1;
@@ -90,6 +89,9 @@ void ADwarfProjectCharacter::BeginPlay()
 	{ 
 		AttachWeapon();
 	}	
+
+	//TODO if saves are added then save the current health to that
+	CurrentHealth = MaxHealth;
 }
 
 
@@ -304,6 +306,7 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage)
 	if (!IsInvincible)
 	{
 		CurrentHealth -= Damage;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" / %f = Health"), CurrentHealth));
 		if (CurrentHealth <= 0)
 		{
 			CurrentHealth = 0;
@@ -414,5 +417,3 @@ bool ADwarfProjectCharacter::GetIsInvincible()
 {
 	return IsInvincible;
 }
-
-
