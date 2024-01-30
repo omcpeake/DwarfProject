@@ -117,11 +117,11 @@ class ADwarfProjectCharacter : public ACharacter
 	// Use TSubclassOf to determine the base type of the Actor you want to spawn.
 	// You can expose the variable to the editor with UPROPERTY()
 	// You can also get the class type of any object with its StaticClass() function
-	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> MyActorClass = AWeaponBase::StaticClass();
 
 	//AI
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* BTAsset;
 
 protected:

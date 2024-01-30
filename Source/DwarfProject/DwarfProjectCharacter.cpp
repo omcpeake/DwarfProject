@@ -299,6 +299,11 @@ bool ADwarfProjectCharacter::GetIsHostile()
 	return IsHostile;
 }
 
+UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
+{
+	return BTAsset;
+}
+
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage)
 {
