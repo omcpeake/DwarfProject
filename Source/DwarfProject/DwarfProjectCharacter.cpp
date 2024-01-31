@@ -12,6 +12,9 @@
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "DrawDebugHelpers.h"
+#define ENABLE_DEBUG_DRAW 1
+
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
@@ -182,7 +185,6 @@ void ADwarfProjectCharacter::MakeAttack()
 	//Only attack if the player is not already attacking
 	if (CanAttack)
 	{
-
 		// use attack 1 by default
 		UAnimMontage* CurrentAttack = Attack1Montage;
 		if (AttackCount == 2)
@@ -327,6 +329,7 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage)
 	else
 	{
 		//TODO do stuff, like play a sound or something
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("hehehe")));
 	}	
 }
 
@@ -354,13 +357,27 @@ void ADwarfProjectCharacter::DetectHit()
 		FCollisionShape::MakeSphere(AttackRadius),
 		QueryParams);
 
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector() * 100;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = TraceVec.Size() * 0.5f + AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bHit ? FColor::Red : FColor::Green;
+	float DebugLifeTime = 5.0f;
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius, CapsuleRot, DrawColor, false, DebugLifeTime);
+#endif
+
+	
 	if (bHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
 		if (HitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("here")));
+			//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
 			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
+
+			
+
 			//Check if target allignment is the same as ours, dont try to damage them
 			if (IsHostile != Target->GetIsHostile())
 			{
