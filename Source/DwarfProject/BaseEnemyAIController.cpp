@@ -3,13 +3,17 @@
 
 #include "BaseEnemyAIController.h"
 #include "DwarfProjectCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 void ABaseEnemyAIController::BeginPlay()
 {
-	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(GetPawn());
-	
+	Super::BeginPlay();
+	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(GetPawn());	
 	if (IsValid(Enemy))
 	{
 		RunBehaviorTree(Enemy->GetBehaviourTree());
+		//GetBlackboardComponent()->SetValueAsObject("Player", GetWorld()->GetFirstPlayerController()->GetPawn());
+		GetBlackboardComponent()->SetValueAsObject("Player", UGameplayStatics::GetPlayerCharacter(this , 0));
 	}
 }

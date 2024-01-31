@@ -80,6 +80,8 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float AttackDashVal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float AttackRadius;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float ParryCooldown;
@@ -92,7 +94,7 @@ class ADwarfProjectCharacter : public ACharacter
 	UAnimMontage* Attack2Montage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack3Montage;
-	float AttackDashVal;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DodgeRollMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -179,6 +181,8 @@ public:
 	void DashForward(float DashAmount);
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void AttackEnd();
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void MakeAttack();
 	UFUNCTION(BlueprintCallable, Category = "Dodge")
 	void DodgeEnd();
 	UFUNCTION(BlueprintCallable, Category = "Parry")
