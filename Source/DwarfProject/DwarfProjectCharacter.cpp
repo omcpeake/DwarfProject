@@ -350,16 +350,16 @@ void ADwarfProjectCharacter::DetectHit()
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams(NAME_None, false, this);
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
-		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * 100,
+		GetActorLocation() + GetActorForwardVector() * HitboxOffset,
+		GetActorLocation() + GetActorForwardVector() * AttackRange,
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel1,
 		FCollisionShape::MakeSphere(AttackRadius),
 		QueryParams);
 
 #if ENABLE_DRAW_DEBUG
-	FVector TraceVec = GetActorForwardVector() * 100;
-	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	FVector TraceVec = GetActorForwardVector() * AttackRange;
+	FVector Center = GetActorLocation() + GetActorForwardVector() * HitboxOffset + TraceVec * 0.5f;
 	float HalfHeight = TraceVec.Size() * 0.5f + AttackRadius;
 	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
 	FColor DrawColor = bHit ? FColor::Red : FColor::Green;
