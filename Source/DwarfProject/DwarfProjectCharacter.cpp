@@ -23,7 +23,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 ADwarfProjectCharacter::ADwarfProjectCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	//GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("DwarfProjectCharacter"));
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -353,7 +353,7 @@ void ADwarfProjectCharacter::DetectHit()
 		GetActorLocation() + GetActorForwardVector() * HitboxOffset,
 		GetActorLocation() + GetActorForwardVector() * AttackRange,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,
+		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(AttackRadius),
 		QueryParams);
 
@@ -372,7 +372,7 @@ void ADwarfProjectCharacter::DetectHit()
 	{
 		if (HitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("here")));
+			
 			//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
 			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
 
