@@ -68,6 +68,8 @@ class ADwarfProjectCharacter : public ACharacter
 	bool CanParry;
 	bool ParryActive;
 	FTimerHandle ParryCooldownTimerHandle;
+	FTimerHandle IFrameTimerHandle;
+	float IframeTime;
 	bool ParryOnCooldown;
 	bool MovementDisabled;
 	bool IsInvincible;
@@ -157,6 +159,8 @@ protected:
 	void Die();
 
 	void ResetAttackCount();
+
+	void IFrameEnd();
 			
 
 protected:

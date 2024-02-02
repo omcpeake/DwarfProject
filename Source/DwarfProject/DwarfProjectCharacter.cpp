@@ -72,6 +72,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	IsInvincible = false;
 	ParryActive = false;
 	ParryOnCooldown = false;
+	IframeTime = 0.5f;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -325,6 +326,13 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage)
 			CurrentHealth = 0;
 			Die();
 		}
+		else
+		{
+			//If youre not dead get invincibility frames
+			IsInvincible = true;
+			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
+			
+		}
 	}
 	else
 	{
@@ -344,6 +352,11 @@ void ADwarfProjectCharacter::ResetAttackCount()
 	AttackCount = 1;
 }
 
+void ADwarfProjectCharacter::IFrameEnd()
+{
+	IsInvincible = false;
+}
+
 void ADwarfProjectCharacter::DetectHit()
 {
 	//https://medium.com/@coderfromnineteen/unreal-from-zero-to-hero-10-collision-detection-and-damage-5b9934af1029
@@ -351,18 +364,19 @@ void ADwarfProjectCharacter::DetectHit()
 	FCollisionQueryParams QueryParams(NAME_None, false, this);
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
 		GetActorLocation() + GetActorForwardVector() * HitboxOffset,
-		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		GetActorLocation() + GetActorForwardVector() * (AttackRange + HitboxOffset),
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(AttackRadius),
 		QueryParams);
 
 #if ENABLE_DRAW_DEBUG
-	FVector TraceVec = GetActorForwardVector() * AttackRange;
-	FVector Center = GetActorLocation() + GetActorForwardVector() * HitboxOffset + TraceVec * 0.5f;
+	FVector TraceVec = GetActorForwardVector() * (AttackRange + HitboxOffset);
+	//FVector Center = GetActorLocation() + GetActorForwardVector() * HitboxOffset + TraceVec * 0.5f;
+	FVector Center = GetActorLocation() + GetActorForwardVector() * HitboxOffset;
 	float HalfHeight = TraceVec.Size() * 0.5f + AttackRadius;
 	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
-	FColor DrawColor = bHit ? FColor::Red : FColor::Green;
+	FColor DrawColor = bHit ? FColor::Green : FColor::Red;
 	float DebugLifeTime = 5.0f;
 	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius, CapsuleRot, DrawColor, false, DebugLifeTime);
 #endif
