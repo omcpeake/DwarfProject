@@ -82,13 +82,15 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	float AttackKnockback;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float AttackDashVal;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float AttackRadius;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
-	float HitboxOffset; //FVector?
+	float HitboxOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float ParryCooldown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
@@ -101,7 +103,6 @@ class ADwarfProjectCharacter : public ACharacter
 	UAnimMontage* Attack2Montage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* Attack3Montage;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DodgeRollMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -181,7 +182,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	float GetBaseDamage();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	void RecieveDamage(float Damage);
+	void RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount);
+
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void DetectHit();
 	UFUNCTION(BlueprintCallable, Category = "Damage")

@@ -314,7 +314,7 @@ UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
 }
 
 
-void ADwarfProjectCharacter::RecieveDamage(float Damage)
+void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount)
 {
 	//Do not take damage if invincible
 	if (!IsInvincible)
@@ -331,6 +331,9 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage)
 			//If youre not dead get invincibility frames
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
+
+			//And get knocked back
+			LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);
 			
 		}
 	}
@@ -398,12 +401,13 @@ void ADwarfProjectCharacter::DetectHit()
 				if (Target->ParryActive == false)
 				{
 					//if target is not parrying, deal damage
-					Target->RecieveDamage(GetBaseDamage());
+					Target->RecieveDamage(GetBaseDamage(), GetActorForwardVector(),	AttackKnockback);
 				}
 				else
 				{
 					//else take half the damage yourself, idiot
-					RecieveDamage(GetBaseDamage()/2);
+					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, 800.0f);
+					//TODO - Play sound on parry
 				}				
 			}			
 		}
