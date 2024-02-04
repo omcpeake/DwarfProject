@@ -10,7 +10,7 @@ EBTNodeResult::Type UBTT_EnemyBasicAttack::ExecuteTask(UBehaviorTreeComponent& O
 	AAIController* AIController = OwnerComp.GetAIOwner();
 	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(AIController->GetPawn());
 
-	if (Enemy)
+	if (IsValid(Enemy))
 	{
 		Enemy->MakeAttack();
 		return EBTNodeResult::Succeeded;
