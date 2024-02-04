@@ -261,6 +261,10 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 	}	
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+
+
 void ADwarfProjectCharacter::AttachWeapon()
 {
 	// You should ensure the Actor class is valid before spawning, otherwise you'll most likely crash the application!
@@ -298,21 +302,8 @@ void ADwarfProjectCharacter::AttachWeapon()
 	}	
 }
 
-float ADwarfProjectCharacter::GetBaseDamage()
-{
-	return BaseDamage;
-}
 
-bool ADwarfProjectCharacter::GetIsHostile()
-{
-	return IsHostile;
-}
-
-UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
-{
-	return BTAsset;
-}
-
+////////////////////////////// Attack Functions //////////////////////////////
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount)
 {
@@ -333,14 +324,13 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
 
 			//And get knocked back
-			LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);
-			
+			LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);			
 		}
 	}
 	else
 	{
 		//TODO do stuff, like play a sound or something
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("hehehe")));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit detected but no damage, get fucked")));
 	}	
 }
 
@@ -383,17 +373,13 @@ void ADwarfProjectCharacter::DetectHit()
 	float DebugLifeTime = 5.0f;
 	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius, CapsuleRot, DrawColor, false, DebugLifeTime);
 #endif
-
 	
 	if (bHit)
 	{
 		if (HitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
-		{
-			
+		{			
 			//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
-			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());
-
-			
+			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());			
 
 			//Check if target allignment is the same as ours, dont try to damage them
 			if (IsHostile != Target->GetIsHostile())
@@ -432,8 +418,6 @@ void ADwarfProjectCharacter::AttackEnd()
 	}		
 }
 
-
-
 void ADwarfProjectCharacter::DodgeEnd()
 {
 	CanDodge = true;
@@ -459,6 +443,23 @@ void ADwarfProjectCharacter::ParryCooldownEnd()
 {
 	ParryOnCooldown = false;
 	CanParry = true;
+}
+
+////////////////////////// Getters //////////////////////////
+
+float ADwarfProjectCharacter::GetBaseDamage()
+{
+	return BaseDamage;
+}
+
+bool ADwarfProjectCharacter::GetIsHostile()
+{
+	return IsHostile;
+}
+
+UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
+{
+	return BTAsset;
 }
 
 bool ADwarfProjectCharacter::GetIsInvincible()
