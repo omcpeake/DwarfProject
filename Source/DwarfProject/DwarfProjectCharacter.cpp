@@ -57,14 +57,11 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
-	
-	AttackAnimResetTime = 1.5f;
-
 	
 
-	//Setup checks
+	//Setup values and checks
 	AttackCount = 1;
+	AttackAnimResetTime = 1.5f;
 	CanAttack = true;
 	CanDodge = true;
 	CanParry = true;
@@ -73,6 +70,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	ParryActive = false;
 	ParryOnCooldown = false;
 	IframeTime = 0.5f;
+	ParryKnockback = 1500.0f;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -157,8 +155,7 @@ void ADwarfProjectCharacter::Move(const FInputActionValue& Value)
 			AddMovementInput(ForwardDirection, MovementVector.Y);
 			AddMovementInput(RightDirection, MovementVector.X);
 		}
-	}
-	
+	}	
 }
 
 void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
@@ -177,7 +174,7 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
-	//Putting attack in seperate function so that it can be called classes which dont take input
+	//Putting attack in seperate function so that it can be called classes which dont take player input
 	MakeAttack();
 }
 
@@ -272,7 +269,6 @@ void ADwarfProjectCharacter::AttachWeapon()
 	{
 		// We need a pointer to the level we want to spawn the Actor in. You can get the persistent level from any Actor or Component with GetWorld()
 		UWorld* MyLevel = GetWorld();
-
 		// You should ensure the level is valid before spawning, or you could crash the engine! This is important if your spawn code could run from the Editor by any reason.
 		if (IsValid(MyLevel))
 		{
@@ -336,7 +332,12 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 
 void ADwarfProjectCharacter::Die()
 {
-	//TODO: Play death animation
+	//TODO: Disable all movement n stuff and then die after montage
+	if (IsValid(DeathMontage))
+	{
+		PlayAnimMontage(DeathMontage);
+	}
+	
 	Destroy();
 }
 
@@ -392,7 +393,9 @@ void ADwarfProjectCharacter::DetectHit()
 				else
 				{
 					//else take half the damage yourself, idiot
-					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, 800.0f);
+					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, ParryKnockback);
+					//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
+					PlayAnimMontage(ParryStunMontage);
 					//TODO - Play sound on parry
 				}				
 			}			

@@ -73,6 +73,7 @@ class ADwarfProjectCharacter : public ACharacter
 	bool ParryOnCooldown;
 	bool MovementDisabled;
 	bool IsInvincible;
+	float ParryKnockback;
 
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
@@ -107,6 +108,8 @@ class ADwarfProjectCharacter : public ACharacter
 	UAnimMontage* DodgeRollMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ParryMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ParryStunMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
 	FTimerHandle AttackAnimResetTimerHandle;
