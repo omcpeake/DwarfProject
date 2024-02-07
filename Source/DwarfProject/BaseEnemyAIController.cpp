@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "BaseEnemyAIController.h"
 #include "DwarfProjectCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,28 +8,24 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "E_EnemyAIStates.h"
 
-ABaseEnemyAIController::ABaseEnemyAIController()
+
+
+
+ABaseEnemyAIController::ABaseEnemyAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerception();
 }
 
-
-
-void ABaseEnemyAIController::BeginPlay()
+void ABaseEnemyAIController::OnPossess(APawn* InPawn)
 {
-	Super::BeginPlay();
-
-	
-
-
-	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(GetPawn());	
+	Super::OnPossess(InPawn);
+	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(InPawn);
 	if (IsValid(Enemy))
 	{
 		RunBehaviorTree(Enemy->GetBehaviourTree());
-		//GetBlackboardComponent()->SetValueAsObject("Player", GetWorld()->GetFirstPlayerController()->GetPawn());
-		GetBlackboardComponent()->SetValueAsObject("Player", UGameplayStatics::GetPlayerCharacter(this , 0));
-		GetBlackboardComponent()->SetValueAsEnum("States", (uint8)E_EnemyAIStates::Attacking);
 
+		//GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		SetStateAsIdle();		
 		
 	}
 }
@@ -46,6 +41,7 @@ void ABaseEnemyAIController::SetStateAsIdle()
 	GetBlackboardComponent()->SetValueAsEnum("States", (uint8)E_EnemyAIStates::Idle);
 }
 
+
 void ABaseEnemyAIController::SetupPerception()
 {
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -56,7 +52,7 @@ void ABaseEnemyAIController::SetupPerception()
 		SightConfig->LoseSightRadius = SightConfig->SightRadius + 200.0f;
 		SightConfig->PeripheralVisionAngleDegrees = 60.0f;
 		SightConfig->SetMaxAge(5.0f);
-		SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.0f;
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 200.0f;
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -71,6 +67,10 @@ void ABaseEnemyAIController::SetupPerception()
 
 void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-
+	// this will just set the target to the player if it sees literally anything
+	GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	SetStateAsAttacking();
 
 }
+
+
