@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "BaseEnemyAIController.generated.h"
+
 
 /**
  * 
@@ -13,7 +15,27 @@ UCLASS()
 class DWARFPROJECT_API ABaseEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
+	ABaseEnemyAIController();
 	virtual void BeginPlay();
+public:
+
+	void SetStateAsAttacking();
+
+	void SetStateAsIdle();
+
+private:
+	//https://sologamedevblog.com/tutorials/unreal-perception-c-friend-or-enemy/ not using this but could be useful
+
+	//https://www.youtube.com/watch?v=c3DxMukF8UI
+	void SetupPerception();
+
+	class UAISenseConfig_Sight* SightConfig;
+
+	//class UAISenseConfig_Hearing* HearingConfig;
+
+	UFUNCTION()
+	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	
 
 
 	

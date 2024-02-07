@@ -13,6 +13,10 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 #include "DrawDebugHelpers.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
+
+
 #define ENABLE_DEBUG_DRAW 1
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -71,6 +75,8 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	ParryOnCooldown = false;
 	IframeTime = 0.5f;
 	ParryKnockback = 1500.0f;
+
+	SetupStimulusSource();
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -129,6 +135,21 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void ADwarfProjectCharacter::SetupStimulusSource()
+{
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus Source"));
+	if (StimulusSource)
+	{
+		StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		StimulusSource->RegisterWithPerceptionSystem();
+	}
+	else
+	{
+		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to create a Stimulus Source component!"), *GetNameSafe(this));
+	}
+
 }
 
 void ADwarfProjectCharacter::Move(const FInputActionValue& Value)
@@ -350,6 +371,8 @@ void ADwarfProjectCharacter::IFrameEnd()
 {
 	IsInvincible = false;
 }
+
+
 
 void ADwarfProjectCharacter::DetectHit()
 {

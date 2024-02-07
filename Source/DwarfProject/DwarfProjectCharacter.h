@@ -61,7 +61,7 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SpinAttackAction;
 
-
+private:
 	//Custom Properties
 	bool CanAttack;
 	bool CanDodge;
@@ -74,6 +74,10 @@ class ADwarfProjectCharacter : public ACharacter
 	bool MovementDisabled;
 	bool IsInvincible;
 	float ParryKnockback;
+
+	class UAIPerceptionStimuliSourceComponent* StimulusSource;
+
+public:
 
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
@@ -165,6 +169,8 @@ protected:
 	void ResetAttackCount();
 
 	void IFrameEnd();
+
+	void SetupStimulusSource();
 			
 
 protected:
