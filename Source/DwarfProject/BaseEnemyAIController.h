@@ -21,7 +21,7 @@ public:
 	void SetStateAsAttacking();
 
 	void SetStateAsIdle();
-
+	
 
 private:
 	//https://sologamedevblog.com/tutorials/unreal-perception-c-friend-or-enemy/ not using this but could be useful
@@ -37,6 +37,9 @@ private:
 
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
+	//UFUNCTION()
+	//void OnTargetPerceptionForgotten(AActor* Actor, FAIStimulus Stimulus);
 	
 	protected:
 		virtual void OnPossess(APawn* InPawn) override;

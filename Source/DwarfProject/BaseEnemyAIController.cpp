@@ -51,15 +51,23 @@ void ABaseEnemyAIController::SetupPerception()
 		SightConfig->SightRadius = 800.0f;
 		SightConfig->LoseSightRadius = SightConfig->SightRadius + 200.0f;
 		SightConfig->PeripheralVisionAngleDegrees = 60.0f;
-		SightConfig->SetMaxAge(5.0f);
-		SightConfig->AutoSuccessRangeFromLastSeenLocation = 200.0f;
+		SightConfig->SetMaxAge(4.0f);
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 300.0f;
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
+		///
+		/// Put damage config here if we want to use it
+		///
+
 
 		GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseEnemyAIController::OnTargetPerceptionUpdated);
+
+		// will add forgotten if I ever manage to find a single person who has this line of code working
+		//GetPerceptionComponent()->OnTargetPerceptionForgotten.AddDynamic(this, &ABaseEnemyAIController::OnTargetPerceptionForgotten);
+
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 	}
 
@@ -67,10 +75,21 @@ void ABaseEnemyAIController::SetupPerception()
 
 void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	// this will just set the target to the player if it sees literally anything
-	GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	SetStateAsAttacking();
+
+	if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(Actor))
+	{
+		GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+		SetStateAsAttacking();
+	}
+	
 
 }
+
+//void ABaseEnemyAIController::OnTargetPerceptionForgotten(AActor* Actor, FAIStimulus Stimulus)
+//{
+//	GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
+//	SetStateAsIdle();
+//}
 
 
