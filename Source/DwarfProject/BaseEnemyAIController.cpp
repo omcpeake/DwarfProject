@@ -41,6 +41,11 @@ void ABaseEnemyAIController::SetStateAsIdle()
 	GetBlackboardComponent()->SetValueAsEnum("States", (uint8)E_EnemyAIStates::Idle);
 }
 
+void ABaseEnemyAIController::SetStateAsDead()
+{
+	GetBlackboardComponent()->SetValueAsEnum("States", (uint8)E_EnemyAIStates::Dead);
+}
+
 
 void ABaseEnemyAIController::SetupPerception()
 {
@@ -48,8 +53,8 @@ void ABaseEnemyAIController::SetupPerception()
 	if (SightConfig)
 	{
 		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-		SightConfig->SightRadius = 800.0f;
-		SightConfig->LoseSightRadius = SightConfig->SightRadius + 200.0f;
+		SightConfig->SightRadius = 1200.0f;
+		SightConfig->LoseSightRadius = SightConfig->SightRadius + 400.0f;
 		SightConfig->PeripheralVisionAngleDegrees = 60.0f;
 		SightConfig->SetMaxAge(4.0f);
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 300.0f;
@@ -75,15 +80,19 @@ void ABaseEnemyAIController::SetupPerception()
 
 void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-
 	if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(Actor))
 	{
-		GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-		SetStateAsAttacking();
-	}
-	
-
+		//assuming that the player is the only non hostile actor and that there is no friendly npcs
+		if (Target->GetIsHostile() == false)
+		{
+			GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			if (GetBlackboardComponent()->GetValueAsEnum("States") == (uint8)E_EnemyAIStates::Idle)
+			{
+				//only start attacking from idle
+				SetStateAsAttacking();
+			}
+		}		
+	}	
 }
 
 //void ABaseEnemyAIController::OnTargetPerceptionForgotten(AActor* Actor, FAIStimulus Stimulus)

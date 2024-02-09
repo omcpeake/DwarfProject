@@ -21,6 +21,8 @@ public:
 	void SetStateAsAttacking();
 
 	void SetStateAsIdle();
+
+	void SetStateAsDead();
 	
 
 private:
