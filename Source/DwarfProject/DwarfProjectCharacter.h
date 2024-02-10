@@ -164,7 +164,7 @@ protected:
 
 	void AttachWeapon();
 
-	void Die();
+	
 
 	void ResetAttackCount();
 
@@ -193,10 +193,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount);
 
-	UFUNCTION(BlueprintCallable, Category = "Damage")
+	UFUNCTION(BlueprintCallable, Category = "Util")
 	void DetectHit();
-	UFUNCTION(BlueprintCallable, Category = "Damage")
+	UFUNCTION(BlueprintCallable, Category = "Util")
 	void DashForward(float DashAmount);
+	UFUNCTION(BlueprintCallable, Category = "Util")
+	void Die();
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void AttackEnd();
 	UFUNCTION(BlueprintCallable, Category = "Attack")
