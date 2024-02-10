@@ -15,9 +15,7 @@ ADeathBox::ADeathBox()
 	RootComponent = BoxComponent;
 
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADeathBox::OnOverlapBegin);
-	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ADeathBox::OnOverlapEnd);
-
-	
+	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ADeathBox::OnOverlapEnd);	
 }
 
 
