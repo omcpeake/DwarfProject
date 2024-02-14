@@ -12,7 +12,7 @@ AAlertRadius::AAlertRadius()
 {
 	AlertSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AlertSphere"));
 	AlertSphere->SetupAttachment(RootComponent);
-	AlertSphere->SetSphereRadius(1200.0f);
+	AlertSphere->SetSphereRadius(800.0f);
 	AlertSphere->SetCollisionProfileName("Trigger");
 	AlertSphere->OnComponentBeginOverlap.AddDynamic(this, &AAlertRadius::OnOverlapBegin);
 	AlertSphere->OnComponentEndOverlap.AddDynamic(this, &AAlertRadius::OnOverlapEnd);
@@ -31,9 +31,9 @@ void AAlertRadius::BeginPlay()
 			if (Target->GetHasAI())
 			{
 				UnitsInAlertRange.Add(Target);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Adding mfs frame 1"));
 			}
 		}
-
 	}
 }
 
@@ -47,8 +47,7 @@ void AAlertRadius::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 		{
 			UnitsInAlertRange.Add(Target);
 
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Added")));
-			
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Added")));			
 		}
 	}
 	
@@ -65,11 +64,13 @@ void AAlertRadius::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 }
 
 void AAlertRadius::UpdateStatesToAttacking()
-{
-	
-	
-	for (auto& Unit : UnitsInAlertRange)
+{		
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, ADwarfProjectCharacter::StaticClass());
+	for (auto& Actor : OverlappingActors)
 	{		
+		ADwarfProjectCharacter* Unit = Cast<ADwarfProjectCharacter>(Actor);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
 		AController* myController = Unit->GetController();
 		ABaseEnemyAIController* myBaseEnemyAIController = Cast<ABaseEnemyAIController>(myController);
 		if (myBaseEnemyAIController)
@@ -87,7 +88,7 @@ void AAlertRadius::UpdateStatesToAttacking()
 			UE_LOG(LogTemp, Warning, TEXT("Cast Failed"));
 		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
+	
 }
 
 TArray<ADwarfProjectCharacter*> AAlertRadius::GetUnitsInAlertRange()
