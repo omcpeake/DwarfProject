@@ -6,7 +6,10 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "WeaponBase.h"
+#include "AlertRadius.h"
+
 #include "DwarfProjectCharacter.generated.h"
+
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -15,6 +18,8 @@ class UInputAction;
 struct FInputActionValue;
 
 class UAnimMontage;
+
+
 
 
 
@@ -77,6 +82,9 @@ private:
 
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 
+
+
+
 public:
 
 	//Unit Stats
@@ -135,7 +143,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TSubclassOf<AWeaponBase> MyActorClass = AWeaponBase::StaticClass();
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TSubclassOf<AAlertRadius> AlertRadiusClass = AAlertRadius::StaticClass();
+
+	class AAlertRadius* AlertRadius;
+
 	//AI
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	bool HasAI;
+
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	class UBehaviorTree* BTAsset;
 
@@ -171,6 +187,10 @@ protected:
 	void IFrameEnd();
 
 	void SetupStimulusSource();
+
+	void SetupAlertRadius();
+
+	
 			
 
 protected:
@@ -202,7 +222,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void AttackEnd();
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void MakeAttack();
+	void MakeAttack(bool Rand);
 	UFUNCTION(BlueprintCallable, Category = "Dodge")
 	void DodgeEnd();
 	UFUNCTION(BlueprintCallable, Category = "Parry")
@@ -213,9 +233,12 @@ public:
 	bool GetIsInvincible();
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
 	bool GetIsHostile();
+	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
+	bool GetHasAI();
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	UBehaviorTree* GetBehaviourTree();
-	
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	AAlertRadius* GetAlertRadius();
 
 
 };

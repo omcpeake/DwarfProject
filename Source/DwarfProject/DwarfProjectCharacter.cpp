@@ -17,6 +17,11 @@
 #include "Perception/AISense_Sight.h"
 
 
+
+
+
+
+
 #define ENABLE_DEBUG_DRAW 1
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -73,10 +78,12 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	IsInvincible = false;
 	ParryActive = false;
 	ParryOnCooldown = false;
-	IframeTime = 0.5f;
+	IframeTime = 0.3f;
 	ParryKnockback = 1500.0f;
 
 	SetupStimulusSource();
+
+
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -97,9 +104,23 @@ void ADwarfProjectCharacter::BeginPlay()
 	{ 
 		AttachWeapon();
 	}	
+	if (HasAI)
+	{
+		SetupAlertRadius();
+	}
+	
+		
+	
+
 
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
+
+	//Adding alert radius to all characters within the constructor and then destroying it if the character is not an AI
+	/*if (HasAI)
+	{
+		AlertRadius->Destroy();
+	}*/
 }
 
 
@@ -149,8 +170,46 @@ void ADwarfProjectCharacter::SetupStimulusSource()
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to create a Stimulus Source component!"), *GetNameSafe(this));
 	}
+}
+
+void ADwarfProjectCharacter::SetupAlertRadius()
+{	
+	// You should ensure the Actor class is valid before spawning,
+// otherwise you'll most likely crash the application!
+	if (IsValid(AlertRadiusClass))
+	{
+		// We need a pointer to the level we want to spawn the Actor in.
+		// You can get the persistent level from any Actor or Component with GetWorld()
+		UWorld* MyLevel = GetWorld();
+
+		// You should ensure the level is valid before spawning, or you could crash the engine!
+		// This is important if your spawn code could run from the Editor by any reason.
+		if (IsValid(MyLevel))
+		{
+			// You can determine the spawned Actor's initial location, rotation and scale.
+			// Here we're just setting it to the spawner's transform.
+			// NOTE: depending on your Actor settings, this could prevent spawning if the location is obstructed!
+			FTransform SpawnTransform = GetActorTransform();
+
+			// Use UWorld->SpawnActor<>() to spawn.
+			// It will return a cast pointer of the Actor type you specified.
+			// There's several variants of the function that allow extra customization.
+			// Here we just pass the Actor class for reflection support, and the transform.
+			AlertRadius = MyLevel->SpawnActor<AAlertRadius>(AlertRadiusClass, SpawnTransform);
+			AlertRadius->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			AlertRadius->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+
+			// You should validate the actor pointer before accessing it in case the Spawn failed.
+			if (IsValid(AlertRadius))
+			{
+				UE_LOG(LogTemp, Log, TEXT("Spawned successfully! New Actor: %s"), *AlertRadius->GetName());
+			}
+		}
+	}
+
 
 }
+
 
 void ADwarfProjectCharacter::Move(const FInputActionValue& Value)
 {
@@ -192,20 +251,27 @@ void ADwarfProjectCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-
 void ADwarfProjectCharacter::Attack(const FInputActionValue& Value)
 {
 	//Putting attack in seperate function so that it can be called classes which dont take player input
-	MakeAttack();
+	MakeAttack(false); //false cus we dont want to randomize the attack
 }
 
-void ADwarfProjectCharacter::MakeAttack()
+void ADwarfProjectCharacter::MakeAttack(bool Rand)
 {
 	//Only attack if the player is not already attacking
 	if (CanAttack)
 	{
-		// use attack 1 by default
+		// use attack 1 as default value
 		UAnimMontage* CurrentAttack = Attack1Montage;
+
+		if(Rand)
+		{
+			//Used to randomize the attack, primarily for the AI
+			int32 rand = FMath::RandRange(1, 3);
+			AttackCount = rand;
+		}
+
 		if (AttackCount == 2)
 		{
 			CurrentAttack = Attack2Montage;
@@ -214,7 +280,8 @@ void ADwarfProjectCharacter::MakeAttack()
 		{
 			CurrentAttack = Attack3Montage;
 			AttackCount = 0;
-		}
+		}		
+		
 		//verify that the attack is not null
 		if (IsValid(CurrentAttack))
 		{
@@ -372,8 +439,6 @@ void ADwarfProjectCharacter::IFrameEnd()
 	IsInvincible = false;
 }
 
-
-
 void ADwarfProjectCharacter::DetectHit()
 {
 	//https://medium.com/@coderfromnineteen/unreal-from-zero-to-hero-10-collision-detection-and-damage-5b9934af1029
@@ -483,10 +548,21 @@ bool ADwarfProjectCharacter::GetIsHostile()
 	return IsHostile;
 }
 
+bool ADwarfProjectCharacter::GetHasAI()
+{
+	return HasAI;
+}
+
 UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
 {
 	return BTAsset;
 }
+
+AAlertRadius* ADwarfProjectCharacter::GetAlertRadius()
+{
+	return AlertRadius;
+}
+
 
 bool ADwarfProjectCharacter::GetIsInvincible()
 {

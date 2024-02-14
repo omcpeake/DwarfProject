@@ -11,6 +11,8 @@
 /**
  * 
  */
+
+
 UCLASS()
 class DWARFPROJECT_API ABaseEnemyAIController : public AAIController
 {
@@ -19,11 +21,14 @@ public:
 	explicit ABaseEnemyAIController(FObjectInitializer const& ObjectInitializer);
 
 	void SetStateAsAttacking();
-
 	void SetStateAsIdle();
-
 	void SetStateAsDead();
-	
+
+	uint8 GetStateAsInt8();
+
+	void SetTarget(AActor* Target);
+
+	void TargetPlayer();	
 
 private:
 	//https://sologamedevblog.com/tutorials/unreal-perception-c-friend-or-enemy/ not using this but could be useful
@@ -33,7 +38,8 @@ private:
 
 	class UAISenseConfig_Sight* SightConfig;
 
-	//class UAISenseConfig_Hearing* HearingConfig;
+	//Reference to the possessed pawn
+	class ADwarfProjectCharacter* PossessedPawn;
 
 	//class UAISenseConfig_Damage* DamageConfig;
 
@@ -44,10 +50,5 @@ private:
 	//void OnTargetPerceptionForgotten(AActor* Actor, FAIStimulus Stimulus);
 	
 	protected:
-		virtual void OnPossess(APawn* InPawn) override;
-
-		
-
-
-	
+		virtual void OnPossess(APawn* InPawn) override;	
 };

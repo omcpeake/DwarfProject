@@ -12,7 +12,7 @@ EBTNodeResult::Type UBTT_EnemyBasicAttack::ExecuteTask(UBehaviorTreeComponent& O
 
 	if (IsValid(Enemy))
 	{
-		Enemy->MakeAttack();
+		Enemy->MakeAttack(true); // true for randomly selected attack anim
 		return EBTNodeResult::Succeeded;
 	}
 

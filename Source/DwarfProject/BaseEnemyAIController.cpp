@@ -1,12 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BaseEnemyAIController.h"
-#include "DwarfProjectCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "E_EnemyAIStates.h"
+#include "Components/SphereComponent.h"
+#include "DwarfProjectCharacter.h"
+
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "AlertRadius.h"
 
 
 
@@ -19,14 +23,13 @@ ABaseEnemyAIController::ABaseEnemyAIController(FObjectInitializer const& ObjectI
 void ABaseEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	ADwarfProjectCharacter* Enemy = Cast<ADwarfProjectCharacter>(InPawn);
-	if (IsValid(Enemy))
+	PossessedPawn = Cast<ADwarfProjectCharacter>(InPawn);
+	if (IsValid(PossessedPawn))
 	{
-		RunBehaviorTree(Enemy->GetBehaviourTree());
+		RunBehaviorTree(PossessedPawn->GetBehaviourTree());
 
 		//GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		SetStateAsIdle();		
-		
+		SetStateAsIdle();				
 	}
 }
 
@@ -46,6 +49,21 @@ void ABaseEnemyAIController::SetStateAsDead()
 	GetBlackboardComponent()->SetValueAsEnum("States", (uint8)E_EnemyAIStates::Dead);
 }
 
+uint8 ABaseEnemyAIController::GetStateAsInt8()
+{
+	
+	return GetBlackboardComponent()->GetValueAsEnum("States");
+}
+
+void ABaseEnemyAIController::SetTarget(AActor* Target)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void ABaseEnemyAIController::TargetPlayer()
+{
+	GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+}
 
 void ABaseEnemyAIController::SetupPerception()
 {
@@ -57,7 +75,8 @@ void ABaseEnemyAIController::SetupPerception()
 		SightConfig->LoseSightRadius = SightConfig->SightRadius + 400.0f;
 		SightConfig->PeripheralVisionAngleDegrees = 60.0f;
 		SightConfig->SetMaxAge(4.0f);
-		SightConfig->AutoSuccessRangeFromLastSeenLocation = 300.0f;
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 150.0f;
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 150.0f;
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -78,27 +97,20 @@ void ABaseEnemyAIController::SetupPerception()
 
 }
 
+
 void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(Actor))
 	{
 		//assuming that the player is the only non hostile actor and that there is no friendly npcs
 		if (Target->GetIsHostile() == false)
-		{
-			GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-			if (GetBlackboardComponent()->GetValueAsEnum("States") == (uint8)E_EnemyAIStates::Idle)
-			{
-				//only start attacking from idle
-				SetStateAsAttacking();
-			}
+		{			
+			PossessedPawn->GetAlertRadius()->UpdateStatesToAttacking();					
 		}		
 	}	
 }
 
-//void ABaseEnemyAIController::OnTargetPerceptionForgotten(AActor* Actor, FAIStimulus Stimulus)
-//{
-//	GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-//	SetStateAsIdle();
-//}
+
+
 
 
