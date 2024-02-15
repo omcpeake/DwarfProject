@@ -18,49 +18,19 @@ AAlertRadius::AAlertRadius()
 	AlertSphere->OnComponentEndOverlap.AddDynamic(this, &AAlertRadius::OnOverlapEnd);
 }
 
-void AAlertRadius::BeginPlay()
-{
-	Super::BeginPlay();
-	TArray<AActor*> OverlappingActors;
-	GetOverlappingActors(OverlappingActors, ADwarfProjectCharacter::StaticClass());
 
-	for (auto& Unit : OverlappingActors)
-	{
-		if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(Unit))
-		{
-			if (Target->GetHasAI())
-			{
-				UnitsInAlertRange.Add(Target);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Adding mfs frame 1"));
-			}
-		}
-	}
-}
 
 
 void AAlertRadius::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
-	if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(OtherActor))
-	{
-		if (Target->GetHasAI())
-		{
-			UnitsInAlertRange.Add(Target);
 
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Added")));			
-		}
-	}
 	
 }
 
 void AAlertRadius::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(OtherActor))
-	{					
-		UnitsInAlertRange.Remove(Target);	
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Removed a mf")));
-	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("End Overlap")));
+
 }
 
 void AAlertRadius::UpdateStatesToAttacking()
@@ -91,10 +61,6 @@ void AAlertRadius::UpdateStatesToAttacking()
 	
 }
 
-TArray<ADwarfProjectCharacter*> AAlertRadius::GetUnitsInAlertRange()
-{
-	return UnitsInAlertRange;
-}
 
 
 

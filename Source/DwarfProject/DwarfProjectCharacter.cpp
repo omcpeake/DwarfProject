@@ -72,14 +72,23 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	AttackCount = 1;
 	AttackAnimResetTime = 1.5f;
 	CanAttack = true;
+
 	CanDodge = true;
+
 	CanParry = true;
-	MovementDisabled = false;
-	IsInvincible = false;
 	ParryActive = false;
 	ParryOnCooldown = false;
-	IframeTime = 0.3f;
 	ParryKnockback = 1500.0f;
+
+	CanSprint = true;
+	IsSprinting = false;
+
+	MovementDisabled = false;
+
+	IsInvincible = false;
+	
+	IframeTime = 0.3f;
+	
 
 	SetupStimulusSource();
 
@@ -109,7 +118,9 @@ void ADwarfProjectCharacter::BeginPlay()
 		SetupAlertRadius();
 	}
 	
-		
+	//Store the walk speed set in the blueprint
+	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	SprintSpeed = WalkSpeed * 1.5f;
 	
 
 
@@ -134,8 +145,8 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		/*EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);*/
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADwarfProjectCharacter::Move);
@@ -150,7 +161,14 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Attack);
 
 		//Spin Attacking
-		EnhancedInputComponent->BindAction(SpinAttackAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Parry);
+		EnhancedInputComponent->BindAction(ParryAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Parry);
+
+		//Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ADwarfProjectCharacter::StopSprint);
+
+		//Pause
+		//EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Pause);
 	}
 	else
 	{
@@ -340,10 +358,39 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 		CanParry = false;
 		CanAttack = false;
 		CanDodge = false;
+		CanSprint = false;
 
 		//Parry has a cooldown
 		GetWorld()->GetTimerManager().SetTimer(ParryCooldownTimerHandle, this, &ADwarfProjectCharacter::ParryCooldownEnd, ParryCooldown, false);
 	}	
+}
+
+void ADwarfProjectCharacter::Sprint(const FInputActionValue& Value)
+{
+	if (Value.Get<float>() > 0)
+	{
+		//if movement is disabled then don't sprint
+		if (MovementDisabled == false)
+		{
+			//if the player is not already sprinting
+			if (CanSprint)
+			{
+				GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+				IsSprinting = true;
+			}
+		}
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		IsSprinting = false;
+	}
+}
+
+void ADwarfProjectCharacter::StopSprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	IsSprinting = false;
 }
 
 
@@ -527,6 +574,7 @@ void ADwarfProjectCharacter::ParryEnd()
 	ParryActive = false;
 	CanAttack = true;
 	CanDodge = true;
+	CanSprint = true;
 	ParryOnCooldown = true;
 }
 

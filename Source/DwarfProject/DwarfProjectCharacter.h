@@ -42,10 +42,6 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -62,9 +58,17 @@ class ADwarfProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
-	/** Spin ATtack Input Action */
+	/** Parry Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* SpinAttackAction;
+	UInputAction* ParryAction;
+
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
+	
+	/** Pause Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
 
 private:
 	//Custom Properties
@@ -72,6 +76,8 @@ private:
 	bool CanDodge;
 	bool CanParry;
 	bool ParryActive;
+	bool CanSprint;
+	bool IsSprinting;
 	FTimerHandle ParryCooldownTimerHandle;
 	FTimerHandle IFrameTimerHandle;
 	float IframeTime;
@@ -82,7 +88,8 @@ private:
 
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 
-
+	float WalkSpeed;
+	float SprintSpeed;
 
 
 public:
@@ -178,10 +185,13 @@ protected:
 
 	void Parry(const FInputActionValue& Value);
 
+	void Sprint(const FInputActionValue& Value);
+	void StopSprint(const FInputActionValue& Value);
+
+
+
 	void AttachWeapon();
-
 	
-
 	void ResetAttackCount();
 
 	void IFrameEnd();
@@ -189,6 +199,8 @@ protected:
 	void SetupStimulusSource();
 
 	void SetupAlertRadius();
+
+
 
 	
 			
