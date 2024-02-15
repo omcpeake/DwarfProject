@@ -336,6 +336,12 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 		{
 			PlayAnimMontage(DodgeRollMontage);
 		}
+
+		
+
+
+		GetCharacterMovement()->StopMovementImmediately();
+
 		DashForward(DashVal);
 
 		IsInvincible = true;
@@ -599,6 +605,11 @@ bool ADwarfProjectCharacter::GetIsHostile()
 bool ADwarfProjectCharacter::GetHasAI()
 {
 	return HasAI;
+}
+
+bool ADwarfProjectCharacter::GetIsSprinting()
+{
+	return IsSprinting;
 }
 
 UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()

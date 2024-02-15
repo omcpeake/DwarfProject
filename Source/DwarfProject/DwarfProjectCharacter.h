@@ -247,6 +247,8 @@ public:
 	bool GetIsHostile();
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
 	bool GetHasAI();
+	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
+	bool GetIsSprinting();
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	UBehaviorTree* GetBehaviourTree();
 	UFUNCTION(BlueprintCallable, Category = "AI")
