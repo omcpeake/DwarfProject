@@ -90,10 +90,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	IframeTime = 0.3f;
 	
 
-	SetupStimulusSource();
-
-
-}
+	SetupStimulusSource();}
 
 void ADwarfProjectCharacter::BeginPlay()
 {
@@ -120,9 +117,8 @@ void ADwarfProjectCharacter::BeginPlay()
 	
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
-	SprintSpeed = WalkSpeed * 1.5f;
+	SprintSpeed = WalkSpeed * 1.8f;
 	
-
 
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
