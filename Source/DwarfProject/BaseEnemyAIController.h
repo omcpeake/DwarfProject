@@ -30,6 +30,9 @@ public:
 
 	void TargetPlayer();	
 
+	UFUNCTION(BlueprintCallable)
+	void SetCanAttack(bool CanAttack);
+
 private:
 	//https://sologamedevblog.com/tutorials/unreal-perception-c-friend-or-enemy/ not using this but could be useful
 
@@ -37,6 +40,7 @@ private:
 	void SetupPerception();
 
 	class UAISenseConfig_Sight* SightConfig;
+	class UAISenseConfig_Damage* DamageConfig;
 
 	//Reference to the possessed pawn
 	class ADwarfProjectCharacter* PossessedPawn;

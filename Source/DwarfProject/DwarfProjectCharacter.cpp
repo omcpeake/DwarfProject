@@ -303,15 +303,16 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 			//Reset the attack timer when we start attack
 			GetWorld()->GetTimerManager().ClearTimer(AttackAnimResetTimerHandle);
 			DashForward(AttackDashVal);
-			PlayAnimMontage(CurrentAttack);
-			//cant change direction once attack has started
-			MovementDisabled = true;
-
+			
 			AttackCount++;
 
 			CanAttack = false;
 			CanDodge = false;
 			CanParry = false;
+
+			PlayAnimMontage(CurrentAttack);
+			//cant change direction once attack has started
+			MovementDisabled = true;
 
 			//Start the timer again at the end of the attack
 			GetWorld()->GetTimerManager().SetTimer(AttackAnimResetTimerHandle, this, &ADwarfProjectCharacter::ResetAttackCount, AttackAnimResetTime, false);
@@ -606,6 +607,11 @@ bool ADwarfProjectCharacter::GetHasAI()
 bool ADwarfProjectCharacter::GetIsSprinting()
 {
 	return IsSprinting;
+}
+
+bool ADwarfProjectCharacter::GetCanAttack()
+{
+	return CanAttack;
 }
 
 UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()

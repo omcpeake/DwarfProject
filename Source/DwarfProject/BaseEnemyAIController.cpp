@@ -29,7 +29,8 @@ void ABaseEnemyAIController::OnPossess(APawn* InPawn)
 		RunBehaviorTree(PossessedPawn->GetBehaviourTree());
 
 		//GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		SetStateAsIdle();				
+		SetStateAsIdle();	
+		SetCanAttack(true);
 	}
 }
 
@@ -65,6 +66,12 @@ void ABaseEnemyAIController::TargetPlayer()
 	GetBlackboardComponent()->SetValueAsObject("Target", UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
+void ABaseEnemyAIController::SetCanAttack(bool CanAttack)
+{
+	GetBlackboardComponent()->SetValueAsBool("CanAttack", CanAttack);
+}
+
+
 void ABaseEnemyAIController::SetupPerception()
 {
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -76,13 +83,13 @@ void ABaseEnemyAIController::SetupPerception()
 		SightConfig->PeripheralVisionAngleDegrees = 60.0f;
 		SightConfig->SetMaxAge(4.0f);
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 100.0f;
+
+		//none of this actually matters cus Im not using the teams system but it needs to be set
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
-		///
-		/// Put damage config here if we want to use it
-		///
+		
 
 
 		GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
@@ -93,6 +100,17 @@ void ABaseEnemyAIController::SetupPerception()
 
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 	}
+
+	//DamageConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("Damage Config"));
+	//if (DamageConfig)
+	//{		
+	//	//Not currently set up to use this but could be useful in the future
+	//	
+
+	//	
+	//	
+	//}
+		
 
 }
 
