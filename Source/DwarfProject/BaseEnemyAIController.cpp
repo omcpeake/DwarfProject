@@ -13,8 +13,6 @@
 #include "AlertRadius.h"
 
 
-
-
 ABaseEnemyAIController::ABaseEnemyAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerception();
@@ -88,10 +86,7 @@ void ABaseEnemyAIController::SetupPerception()
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
 		
-
-
 		GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseEnemyAIController::OnTargetPerceptionUpdated);
 
@@ -109,11 +104,8 @@ void ABaseEnemyAIController::SetupPerception()
 
 	//	
 	//	
-	//}
-		
-
+	//}	
 }
-
 
 void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
@@ -126,8 +118,3 @@ void ABaseEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulu
 		}		
 	}	
 }
-
-
-
-
-
