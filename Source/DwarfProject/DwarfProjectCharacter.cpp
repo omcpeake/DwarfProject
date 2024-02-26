@@ -468,6 +468,15 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 	}	
 }
 
+void ADwarfProjectCharacter::RecieveHealth(float Healing)
+{
+	CurrentHealth += Healing;
+	if (CurrentHealth >= MaxHealth)
+	{
+		CurrentHealth = MaxHealth;
+	}
+}
+
 void ADwarfProjectCharacter::Die()
 {
 	//TODO: Disable all movement n stuff and then die after montage
