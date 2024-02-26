@@ -20,21 +20,14 @@ AHealthPickup::AHealthPickup()
 	
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
-
-
-
-	
-
 	Rotation = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("Rotation"));
-	Rotation->RotationRate = FRotator(0.0f, 80.0f, 0.0f);
-	
+	Rotation->RotationRate = FRotator(0.0f, 80.0f, 0.0f);	
 }
 
 void AHealthPickup::BeginPlay()
 {
 	Super::BeginPlay();	
 }
-
 
 
 void AHealthPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -40,7 +40,6 @@ void AAlertRadius::UpdateStatesToAttacking()
 	for (auto& Actor : OverlappingActors)
 	{		
 		ADwarfProjectCharacter* Unit = Cast<ADwarfProjectCharacter>(Actor);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
 		AController* myController = Unit->GetController();
 		ABaseEnemyAIController* myBaseEnemyAIController = Cast<ABaseEnemyAIController>(myController);
 		if (myBaseEnemyAIController)
