@@ -2,6 +2,8 @@
 
 
 #include "DamageBox.h"
+#include "DwarfProjectCharacter.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ADamageBox::ADamageBox()
@@ -36,7 +38,7 @@ void ADamageBox::Tick(float DeltaTime)
 		ADwarfProjectCharacter* Unit = Cast<ADwarfProjectCharacter>(Actor);
 		if (Unit)
 		{
-			Unit->RecieveDamage(10);
+			Unit->RecieveDamage(10.0f);
 		}
 	}
 

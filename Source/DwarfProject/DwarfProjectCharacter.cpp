@@ -441,6 +441,22 @@ void ADwarfProjectCharacter::AttachWeapon()
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount)
 {
+	bool DamageDealt = HandleDamage(Damage);
+	if (DamageDealt)
+	{
+		//If damage was dealt then apply knockback
+		LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);
+	}
+
+}
+
+void ADwarfProjectCharacter::RecieveDamage(float Damage)
+{
+	HandleDamage(Damage);
+}
+
+bool ADwarfProjectCharacter::HandleDamage(float Damage)
+{
 	//Do not take damage if invincible
 	if (!IsInvincible)
 	{
@@ -457,15 +473,17 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
 
-			//And get knocked back
-			LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);			
+			
 		}
+		return true;
+		
 	}
 	else
 	{
 		//TODO do stuff, like play a sound or something
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit detected but no damage, get fucked")));
-	}	
+		return false;
+	}
 }
 
 void ADwarfProjectCharacter::RecieveHealth(float Healing)

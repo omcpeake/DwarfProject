@@ -200,6 +200,7 @@ protected:
 
 	void SetupAlertRadius();
 
+	bool HandleDamage(float Damage);
 
 
 	
@@ -224,6 +225,7 @@ public:
 	float GetBaseDamage();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount);
+	void RecieveDamage(float Damage);
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void RecieveHealth(float Healing);
 

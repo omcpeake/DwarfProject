@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ADamageBox();
 
-	UBoxComponent* BoxComponent;
+	class UBoxComponent* BoxComponent;
 
 protected:
 	// Called when the game starts or when spawned
