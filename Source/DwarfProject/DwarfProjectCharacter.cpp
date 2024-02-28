@@ -16,6 +16,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 
+#include "BaseEnemyAIController.h"
 
 
 
@@ -69,6 +70,8 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	
 
 	//Setup values and checks
+	IsDead = false;
+
 	AttackCount = 1;
 	AttackAnimResetTime = 1.5f;
 	CanAttack = true;
@@ -90,7 +93,8 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	IframeTime = 0.3f;
 	
 
-	SetupStimulusSource();}
+	SetupStimulusSource();
+}
 
 void ADwarfProjectCharacter::BeginPlay()
 {
@@ -123,11 +127,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
 
-	//Adding alert radius to all characters within the constructor and then destroying it if the character is not an AI
-	/*if (HasAI)
-	{
-		AlertRadius->Destroy();
-	}*/
+
 }
 
 
@@ -334,9 +334,6 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 			PlayAnimMontage(DodgeRollMontage);
 		}
 
-		
-
-
 		GetCharacterMovement()->StopMovementImmediately();
 
 		DashForward(DashVal);
@@ -441,6 +438,9 @@ void ADwarfProjectCharacter::AttachWeapon()
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount)
 {
+	//If you are dead then dont take damage
+	if (IsDead)
+		return;
 	bool DamageDealt = HandleDamage(Damage);
 	if (DamageDealt)
 	{
@@ -452,6 +452,9 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage)
 {
+	//If you are dead then dont take damage
+	if (IsDead)
+		return;
 	HandleDamage(Damage);
 }
 
@@ -497,13 +500,34 @@ void ADwarfProjectCharacter::RecieveHealth(float Healing)
 
 void ADwarfProjectCharacter::Die()
 {
-	//TODO: Disable all movement n stuff and then die after montage
+	IsDead = true;
 	if (IsValid(DeathMontage))
 	{
+		MovementDisabled = true;
+		CanParry = false;
+		CanAttack = false;
+		CanDodge = false;
+		CanSprint = false;
+
+		//Destroy from anim montage after death anim plays
 		PlayAnimMontage(DeathMontage);
+
+		//If the actor is controlled by BT then set state as dead to disable it
+		if (HasAI)
+		{
+			AController* myController = GetController();
+			ABaseEnemyAIController* myBaseEnemyAIController = Cast<ABaseEnemyAIController>(myController);
+			if (myBaseEnemyAIController)
+			{
+				myBaseEnemyAIController->SetStateAsDead();
+			}			
+		}
 	}
-	
-	Destroy();
+	else
+	{
+		//If no death anim just destroy on the spot
+		Destroy();
+	}		
 }
 
 void ADwarfProjectCharacter::ResetAttackCount()
@@ -557,11 +581,14 @@ void ADwarfProjectCharacter::DetectHit()
 				}
 				else
 				{
+					//Parry anim before taking damage otherwise it breaks
+					PlayAnimMontage(ParryStunMontage);
+					//TODO - Play sound on parry
+
 					//else take half the damage yourself, idiot
 					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, ParryKnockback);
 					//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
-					PlayAnimMontage(ParryStunMontage);
-					//TODO - Play sound on parry
+					
 				}				
 			}			
 		}

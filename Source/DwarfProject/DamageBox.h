@@ -16,6 +16,7 @@ public:
 	ADamageBox();
 
 	class UBoxComponent* BoxComponent;
+	float Damage;
 
 protected:
 	// Called when the game starts or when spawned

@@ -78,6 +78,8 @@ private:
 	bool ParryActive;
 	bool CanSprint;
 	bool IsSprinting;
+	bool IsDead;
+
 	FTimerHandle ParryCooldownTimerHandle;
 	FTimerHandle IFrameTimerHandle;
 	float IframeTime;

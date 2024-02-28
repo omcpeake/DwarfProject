@@ -17,6 +17,8 @@ ADamageBox::ADamageBox()
 	BoxComponent->SetupAttachment(RootComponent);
 	RootComponent = BoxComponent;
 
+	Damage = 5.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +40,7 @@ void ADamageBox::Tick(float DeltaTime)
 		ADwarfProjectCharacter* Unit = Cast<ADwarfProjectCharacter>(Actor);
 		if (Unit)
 		{
-			Unit->RecieveDamage(10.0f);
+			Unit->RecieveDamage(Damage);
 		}
 	}
 
