@@ -93,6 +93,9 @@ private:
 	float WalkSpeed;
 	float SprintSpeed;
 
+	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
+
+
 
 public:
 
@@ -144,6 +147,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	FName WeaponSocketName;
 
+
 	
 
 	// Use TSubclassOf to determine the base type of the Actor you want to spawn.
@@ -163,6 +167,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	class UBehaviorTree* BTAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> HUDWidgetClass;
 
 protected:
 	float CurrentHealth;
