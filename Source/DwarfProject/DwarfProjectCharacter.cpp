@@ -333,7 +333,6 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 		{
 			PlayAnimMontage(DodgeRollMontage);
 		}
-
 		GetCharacterMovement()->StopMovementImmediately();
 
 		DashForward(DashVal);
@@ -475,8 +474,6 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 			//If youre not dead get invincibility frames
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
-
-			
 		}
 		return true;
 		
@@ -677,7 +674,6 @@ AAlertRadius* ADwarfProjectCharacter::GetAlertRadius()
 {
 	return AlertRadius;
 }
-
 
 bool ADwarfProjectCharacter::GetIsInvincible()
 {
