@@ -115,12 +115,18 @@ void ADwarfProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//TODO if saves are added then save the current health to that
+	CurrentHealth = MaxHealth;
+	//Setup Healthbar
 	if (!HasAI && PlayerHUDClass)
 	{
 		PlayerHUD = CreateWidget<UDwarfHud>(GetWorld(), PlayerHUDClass);
 		if (PlayerHUD)
 		{
+			PlayerHUD->SetHealth(CurrentHealth, MaxHealth);
 			PlayerHUD->AddToViewport();
+			
 		}
 	}
 
@@ -140,8 +146,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	SprintSpeed = WalkSpeed * 1.8f;
 	
 
-	//TODO if saves are added then save the current health to that
-	CurrentHealth = MaxHealth;
+	
 
 
 }
@@ -491,6 +496,12 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
 		}
+		//Update player Healthbar
+		if (PlayerHUD)
+		{
+			PlayerHUD->SetHealth(CurrentHealth, MaxHealth);
+		}
+		
 		return true;
 		
 	}

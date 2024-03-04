@@ -18,6 +18,7 @@ public:
 
 	void SetHealth(float CurrentHealth, float MaxHealth);
 
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* HealthBar;
 	

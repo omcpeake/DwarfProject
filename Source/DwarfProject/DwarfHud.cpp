@@ -11,3 +11,5 @@ void UDwarfHud::SetHealth(float CurrentHealth, float MaxHealth)
 		HealthBar->SetPercent(CurrentHealth / MaxHealth);
 	}
 }
+
+
