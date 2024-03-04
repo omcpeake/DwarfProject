@@ -15,6 +15,8 @@
 #include "DrawDebugHelpers.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "DwarfHud.h"
+#include "Blueprint/UserWidget.h"
 
 #include "BaseEnemyAIController.h"
 
@@ -94,6 +96,10 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	
 
 	SetupStimulusSource();
+
+	//HUD
+	PlayerHUDClass = nullptr;
+	PlayerHUD = nullptr;
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -109,6 +115,16 @@ void ADwarfProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	if (!HasAI && PlayerHUDClass)
+	{
+		PlayerHUD = CreateWidget<UDwarfHud>(GetWorld(), PlayerHUDClass);
+		if (PlayerHUD)
+		{
+			PlayerHUD->AddToViewport();
+		}
+	}
+
+
 	//If weapon is selected in blueprint then attach it here
 	if(HasWeapon==true)
 	{ 

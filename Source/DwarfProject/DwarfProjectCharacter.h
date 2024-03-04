@@ -19,10 +19,6 @@ struct FInputActionValue;
 
 class UAnimMontage;
 
-
-
-
-
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -41,31 +37,24 @@ class ADwarfProjectCharacter : public ACharacter
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
-
 	/** Dash Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DodgeRollAction;
-
 	/** Attack Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
-
 	/** Parry Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ParryAction;
-
 	/** Sprint Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-	
 	/** Pause Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
@@ -94,7 +83,6 @@ private:
 	float SprintSpeed;
 
 	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
-
 
 
 public:
@@ -146,8 +134,6 @@ public:
 	UStaticMesh* WeaponMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	FName WeaponSocketName;
-
-
 	
 
 	// Use TSubclassOf to determine the base type of the Actor you want to spawn.
@@ -160,6 +146,12 @@ public:
 	TSubclassOf<AAlertRadius> AlertRadiusClass = AAlertRadius::StaticClass();
 
 	class AAlertRadius* AlertRadius;
+
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UDwarfHud> PlayerHUDClass;
+	UPROPERTY()
+	class UDwarfHud* PlayerHUD;
 
 	//AI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
@@ -177,14 +169,11 @@ protected:
 	int32 AttackCount;
 
 public:
-	ADwarfProjectCharacter();
-	
+	ADwarfProjectCharacter();	
 
 protected:
-
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
@@ -197,8 +186,6 @@ protected:
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
 
-
-
 	void AttachWeapon();
 	
 	void ResetAttackCount();
@@ -209,11 +196,7 @@ protected:
 
 	void SetupAlertRadius();
 
-	bool HandleDamage(float Damage);
-
-
-	
-			
+	bool HandleDamage(float Damage);				
 
 protected:
 	// APawn interface
@@ -254,6 +237,7 @@ public:
 	void ParryEnd();
 	UFUNCTION(BlueprintCallable, Category = "Parry")
 	void ParryCooldownEnd();
+
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
 	bool GetIsInvincible();
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
