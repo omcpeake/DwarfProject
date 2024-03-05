@@ -382,6 +382,12 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 
 		//Parry has a cooldown
 		GetWorld()->GetTimerManager().SetTimer(ParryCooldownTimerHandle, this, &ADwarfProjectCharacter::ParryCooldownEnd, ParryCooldown, false);
+
+		//Update Ui
+		if (PlayerHUD)
+		{
+			PlayerHUD->DarkenShieldIcon();
+		}
 	}	
 }
 
@@ -656,13 +662,19 @@ void ADwarfProjectCharacter::ParryEnd()
 	CanAttack = true;
 	CanDodge = true;
 	CanSprint = true;
-	ParryOnCooldown = true;
+	ParryOnCooldown = true;	
 }
 
 void ADwarfProjectCharacter::ParryCooldownEnd()
 {
 	ParryOnCooldown = false;
 	CanParry = true;
+
+	//Update UI
+	if (PlayerHUD)
+	{
+		PlayerHUD->BrightenShieldIcon();
+	}
 }
 
 ////////////////////////// Getters //////////////////////////
