@@ -759,6 +759,11 @@ AAlertRadius* ADwarfProjectCharacter::GetAlertRadius()
 	return AlertRadius;
 }
 
+void ADwarfProjectCharacter::SetGameState(EGameStates State)
+{
+	GameState = State;
+}
+
 bool ADwarfProjectCharacter::GetIsInvincible()
 {
 	return IsInvincible;

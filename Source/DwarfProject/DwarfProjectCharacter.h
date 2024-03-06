@@ -83,7 +83,7 @@ private:
 	float WalkSpeed;
 	float SprintSpeed;
 
-	EGameStates* GameState;
+	EGameStates GameState;
 
 	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
 
@@ -260,6 +260,8 @@ public:
 	UBehaviorTree* GetBehaviourTree();
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	AAlertRadius* GetAlertRadius();
+
+	void SetGameState(EGameStates State);
 
 
 };

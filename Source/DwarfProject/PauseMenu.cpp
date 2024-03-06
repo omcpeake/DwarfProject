@@ -5,6 +5,9 @@
 
 #include "Components/Button.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "DwarfProjectCharacter.h"
+
 
 void UPauseMenu::NativeConstruct()
 {
@@ -20,6 +23,16 @@ void UPauseMenu::NativeConstruct()
 
 void UPauseMenu::ResumeButtonOnClicked()
 {
+	
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	
+	ADwarfProjectCharacter* PlayerDwarfCharacter = Cast<ADwarfProjectCharacter>(PlayerCharacter);
+	PlayerDwarfCharacter->SetGameState(EGameStates::Running);
+	
+	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+	MyPlayer->SetPause(false);
+	MyPlayer->bShowMouseCursor = false;
+	RemoveFromViewport();
 
 }
 
