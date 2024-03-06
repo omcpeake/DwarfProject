@@ -13,5 +13,19 @@ UCLASS()
 class DWARFPROJECT_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* StartGameButton;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* QuitButton;
+
+
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void StartGameButtonOnClicked();
+	UFUNCTION()
+	void QuitButtonOnClicked();
+
+
 };
