@@ -13,19 +13,19 @@ void UDwarfHud::SetHealth(float CurrentHealth, float MaxHealth)
 	}
 }
 
-void UDwarfHud::DarkenShieldIcon()
+void UDwarfHud::DarkenParryIcon()
 {
-	if (Shield)
+	if (ParryIcon)
 	{
-		Shield->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		ParryIcon->SetColorAndOpacity(FLinearColor(0.1f, 0.1f, 0.1f, 1.0f));
 	}
 }
 
-void UDwarfHud::BrightenShieldIcon()
+void UDwarfHud::BrightenParryIcon()
 {
-	if (Shield)
+	if (ParryIcon)
 	{
-		Shield->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		ParryIcon->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 

@@ -16,6 +16,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "DwarfHud.h"
+#include "PauseMenu.h"
 #include "Blueprint/UserWidget.h"
 
 #include "BaseEnemyAIController.h"
@@ -107,6 +108,8 @@ void ADwarfProjectCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	GameState = EGameStates::Running;
+
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -143,12 +146,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
-	SprintSpeed = WalkSpeed * 1.8f;
-	
-
-	
-
-
+	SprintSpeed = WalkSpeed * 1.8f;	
 }
 
 
@@ -185,7 +183,7 @@ void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ADwarfProjectCharacter::StopSprint);
 
 		//Pause
-		//EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Pause);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ADwarfProjectCharacter::Pause);
 	}
 	else
 	{
@@ -386,7 +384,7 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 		//Update Ui
 		if (PlayerHUD)
 		{
-			PlayerHUD->DarkenShieldIcon();
+			PlayerHUD->DarkenParryIcon();
 		}
 	}	
 }
@@ -417,6 +415,55 @@ void ADwarfProjectCharacter::StopSprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	IsSprinting = false;
+}
+
+void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
+{
+	if (PauseMenuClass)
+	{
+		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+		switch (GameState)
+		{
+		case EGameStates::Running:
+			
+			PauseMenu = CreateWidget<UPauseMenu>(GetWorld(), PauseMenuClass);
+			if (PauseMenu)
+			{
+				PauseMenu->AddToViewport();
+
+				
+				if (MyPlayer)
+				{
+					MyPlayer->SetPause(true);
+					MyPlayer->bShowMouseCursor = true;
+
+				}
+			}
+			GameState = EGameStates::Paused;
+			break;
+		case EGameStates::Paused:
+			if (PauseMenu)
+			{
+				PauseMenu->RemoveFromViewport();
+				if (MyPlayer)
+				{
+					MyPlayer->SetPause(false);
+					MyPlayer->bShowMouseCursor = false;
+				}
+			}
+			GameState = EGameStates::Running;
+			break;
+		default:
+			break;
+		}
+	}
+	
+	if (PauseMenuClass)
+	{
+		
+	}
+	
+
 }
 
 
@@ -490,7 +537,6 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	if (!IsInvincible)
 	{
 		CurrentHealth -= Damage;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" / %f = Health"), CurrentHealth));
 		if (CurrentHealth <= 0)
 		{
 			CurrentHealth = 0;
@@ -514,7 +560,6 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	else
 	{
 		//TODO do stuff, like play a sound or something
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit detected but no damage, get fucked")));
 		return false;
 	}
 }
@@ -673,7 +718,7 @@ void ADwarfProjectCharacter::ParryCooldownEnd()
 	//Update UI
 	if (PlayerHUD)
 	{
-		PlayerHUD->BrightenShieldIcon();
+		PlayerHUD->BrightenParryIcon();
 	}
 }
 

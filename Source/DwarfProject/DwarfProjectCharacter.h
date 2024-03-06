@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "WeaponBase.h"
 #include "AlertRadius.h"
+#include "EGameStates.h"
 
 #include "DwarfProjectCharacter.generated.h"
 
@@ -82,6 +83,8 @@ private:
 	float WalkSpeed;
 	float SprintSpeed;
 
+	EGameStates* GameState;
+
 	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
 
 
@@ -153,6 +156,11 @@ public:
 	UPROPERTY()
 	class UDwarfHud* PlayerHUD;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UPauseMenu> PauseMenuClass;
+	UPROPERTY()
+	class UPauseMenu* PauseMenu;
+
 	//AI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	bool HasAI;
@@ -160,8 +168,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	class UBehaviorTree* BTAsset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> HUDWidgetClass;
 
 protected:
 	float CurrentHealth;
@@ -185,6 +191,8 @@ protected:
 
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
+
+	void Pause(const FInputActionValue& Value);
 
 	void AttachWeapon();
 	

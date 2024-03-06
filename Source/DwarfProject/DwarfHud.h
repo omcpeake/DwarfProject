@@ -17,14 +17,14 @@ class DWARFPROJECT_API UDwarfHud : public UUserWidget
 public:
 
 	void SetHealth(float CurrentHealth, float MaxHealth);
-	void DarkenShieldIcon();
-	void BrightenShieldIcon();
+	void DarkenParryIcon();
+	void BrightenParryIcon();
 
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* HealthBar;
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* Shield;
+	class UImage* ParryIcon;
 
 
 
