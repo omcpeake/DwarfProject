@@ -61,6 +61,9 @@ class ADwarfProjectCharacter : public ACharacter
 	UInputAction* PauseAction;
 
 private:
+
+	
+
 	//Custom Properties
 	bool CanAttack;
 	bool CanDodge;
@@ -83,8 +86,8 @@ private:
 	float WalkSpeed;
 	float SprintSpeed;
 
-	EGameStates GameState;
-
+	//UDwarfGameInstance* GameInstance;
+	
 	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
 
 
@@ -111,6 +114,8 @@ public:
 	float ParryCooldown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float DashVal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
+	EGameStates GameState;
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -157,6 +162,12 @@ public:
 	class UDwarfHud* PlayerHUD;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UMainMenu> MainMenuClass;
+	UPROPERTY()
+	class UMainMenu* MainMenu;
+
+
+	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UPauseMenu> PauseMenuClass;
 	UPROPERTY()
 	class UPauseMenu* PauseMenu;
@@ -178,6 +189,9 @@ public:
 	ADwarfProjectCharacter();	
 
 protected:
+	void SetupPlayer();
+	void EnableMainMenu();
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 	/** Called for looking input */
@@ -193,6 +207,7 @@ protected:
 	void StopSprint(const FInputActionValue& Value);
 
 	void Pause(const FInputActionValue& Value);
+
 
 	void AttachWeapon();
 	
@@ -212,6 +227,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	/** Returns CameraBoom subobject **/

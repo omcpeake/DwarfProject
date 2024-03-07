@@ -17,12 +17,13 @@
 #include "Perception/AISense_Sight.h"
 #include "DwarfHud.h"
 #include "PauseMenu.h"
+#include "MainMenu.h"
 #include "Blueprint/UserWidget.h"
 
 #include "BaseEnemyAIController.h"
 
 
-
+#include "DwarfGameInstance.h"
 
 
 
@@ -103,13 +104,52 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	PlayerHUD = nullptr;
 }
 
+
+
 void ADwarfProjectCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
 
-	GameState = EGameStates::Running;
+	//TODO start with state as menu and then change to running
+	
+	//GameState = EGameStates::Running;
+	
+	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		GameState = GameInstance->State;
+	}
 
+	switch (GameState)
+	{
+	case EGameStates::Menu:
+		EnableMainMenu();
+		break;
+	case EGameStates::Running:
+		SetupPlayer();
+	default:
+		break;
+	}
+
+	
+	
+}
+
+void ADwarfProjectCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//Check if the game state has changed
+	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+	if (GameState != GameInstance->State)
+	{
+		GameState = GameInstance->State;		
+	}
+}
+
+void ADwarfProjectCharacter::SetupPlayer()
+{
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -129,27 +169,45 @@ void ADwarfProjectCharacter::BeginPlay()
 		{
 			PlayerHUD->SetHealth(CurrentHealth, MaxHealth);
 			PlayerHUD->AddToViewport();
-			
+
 		}
 	}
 
-
 	//If weapon is selected in blueprint then attach it here
-	if(HasWeapon==true)
-	{ 
+	if (HasWeapon == true)
+	{
 		AttachWeapon();
-	}	
+	}
 	if (HasAI)
 	{
 		SetupAlertRadius();
 	}
-	
+
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
-	SprintSpeed = WalkSpeed * 1.8f;	
+	SprintSpeed = WalkSpeed * 1.8f;
 }
 
+void ADwarfProjectCharacter::EnableMainMenu()
+{
+	if (MainMenuClass)
+	{
+		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 
+		MainMenu = CreateWidget<UMainMenu>(GetWorld(), MainMenuClass);
+		if (MainMenu)
+		{
+			MainMenu->AddToViewport();
+
+			if (MainMenu)
+			{
+				MyPlayer->SetPause(true);
+				MyPlayer->bShowMouseCursor = true;
+
+			}
+		}					
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -421,6 +479,8 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 {
 	if (PauseMenuClass)
 	{
+		UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+
 		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 		switch (GameState)
 		{
@@ -439,7 +499,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 
 				}
 			}
-			GameState = EGameStates::Paused;
+			GameInstance->State = EGameStates::Paused;
 			break;
 		case EGameStates::Paused:
 			if (PauseMenu)
@@ -451,19 +511,12 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 					MyPlayer->bShowMouseCursor = false;
 				}
 			}
-			GameState = EGameStates::Running;
+			GameInstance->State = EGameStates::Running;
 			break;
 		default:
 			break;
 		}
 	}
-	
-	if (PauseMenuClass)
-	{
-		
-	}
-	
-
 }
 
 

@@ -3,6 +3,8 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
+#include "DwarfGameInstance.h"
 
 void UMainMenu::NativeConstruct()
 {
@@ -18,8 +20,15 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartGameButtonOnClicked()
 {
+	UGameplayStatics::OpenLevel(GetWorld(), "Level1");
+	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetWorld()->GetGameInstance());
+	if (GameInstance)
+	{
+		GameInstance->State = EGameStates::Running;
+	}
 }
 
 void UMainMenu::QuitButtonOnClicked()
 {
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 }

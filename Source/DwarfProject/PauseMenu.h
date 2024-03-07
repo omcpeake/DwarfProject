@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DwarfGameInstance.h"
+
 #include "PauseMenu.generated.h"
 
 /**
@@ -21,12 +23,20 @@ public:
 	class UButton* ResumeButton;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* ReturnToMenuButton;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* QuitButton;
 
 	virtual void NativeConstruct() override;
 
+	UDwarfGameInstance *GameInstance;
+
 	UFUNCTION()
 	void ResumeButtonOnClicked();
+	UFUNCTION()
+	void ReturnToMenuButtonOnClicked();
+	//TODO option menu
 	UFUNCTION()
 	void QuitButtonOnClicked();
 

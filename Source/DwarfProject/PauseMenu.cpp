@@ -15,10 +15,16 @@ void UPauseMenu::NativeConstruct()
 	{
 		ResumeButton->OnClicked.AddDynamic(this, &UPauseMenu::ResumeButtonOnClicked);
 	}
+	if (ReturnToMenuButton)
+	{
+		ReturnToMenuButton->OnClicked.AddDynamic(this, &UPauseMenu::ReturnToMenuButtonOnClicked);
+	}
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UPauseMenu::QuitButtonOnClicked);
 	}
+
+	GameInstance = Cast<UDwarfGameInstance>(GetWorld()->GetGameInstance());
 }
 
 void UPauseMenu::ResumeButtonOnClicked()
@@ -26,14 +32,19 @@ void UPauseMenu::ResumeButtonOnClicked()
 	
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	
-	ADwarfProjectCharacter* PlayerDwarfCharacter = Cast<ADwarfProjectCharacter>(PlayerCharacter);
-	PlayerDwarfCharacter->SetGameState(EGameStates::Running);
+	GameInstance->State = EGameStates::Running;
 	
 	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 	MyPlayer->SetPause(false);
 	MyPlayer->bShowMouseCursor = false;
 	RemoveFromViewport();
 
+}
+
+void UPauseMenu::ReturnToMenuButtonOnClicked()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	GameInstance->State = EGameStates::Menu;
 }
 
 void UPauseMenu::QuitButtonOnClicked()
