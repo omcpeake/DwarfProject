@@ -93,6 +93,10 @@ private:
 
 public:
 
+	//Game Settings
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Settings", meta = (AllowPrivateAccess = "true"))
+	EGameStates GameState;
+
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	bool IsHostile;
@@ -114,8 +118,7 @@ public:
 	float ParryCooldown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
 	float DashVal;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
-	EGameStates GameState;
+	
 
 	//Attack Animations
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations", meta = (AllowPrivateAccess = "true"))
@@ -155,7 +158,7 @@ public:
 
 	class AAlertRadius* AlertRadius;
 
-
+	//UI and HUD
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UDwarfHud> PlayerHUDClass;
 	UPROPERTY()

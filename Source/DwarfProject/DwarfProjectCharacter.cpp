@@ -118,7 +118,8 @@ void ADwarfProjectCharacter::BeginPlay()
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
-		GameState = GameInstance->State;
+		//Gamestate set in blueprint just for development, in release just set to menu
+		GameInstance->State = GameState;
 	}
 
 	switch (GameState)

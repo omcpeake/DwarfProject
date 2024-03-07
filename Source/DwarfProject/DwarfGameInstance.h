@@ -16,7 +16,10 @@ class DWARFPROJECT_API UDwarfGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 	public:
-		EGameStates State = EGameStates::Menu;
+		EGameStates State;
+
+		//only needs to be set when changing levels
+		float currentHealth;
 		
 	
 };
