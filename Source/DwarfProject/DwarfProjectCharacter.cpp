@@ -116,13 +116,17 @@ void ADwarfProjectCharacter::BeginPlay()
 	//GameState = EGameStates::Running;
 	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
-	if (GameInstance)
-	{
-		//Gamestate set in blueprint just for development, in release just set to menu
-		GameInstance->State = GameState;
-	}
+	//if (GameInstance)
+	//{
+	//	//Gamestate set in blueprint just for development, in release just set to menu
+	//	GameInstance->SetState(GameState);
+	//}
+	//else
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("GameInstance not found"));
+	//}
 
-	switch (GameState)
+	switch (GameInstance->GetState())
 	{
 	case EGameStates::Menu:
 		EnableMainMenu();
@@ -141,12 +145,6 @@ void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Check if the game state has changed
-	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
-	if (GameState != GameInstance->State)
-	{
-		GameState = GameInstance->State;		
-	}
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -483,7 +481,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 		UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 
 		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
-		switch (GameState)
+		switch (GameInstance->GetState())
 		{
 		case EGameStates::Running:
 			
@@ -500,7 +498,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 
 				}
 			}
-			GameInstance->State = EGameStates::Paused;
+			GameInstance->SetState(EGameStates::Paused);
 			break;
 		case EGameStates::Paused:
 			if (PauseMenu)
@@ -512,7 +510,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 					MyPlayer->bShowMouseCursor = false;
 				}
 			}
-			GameInstance->State = EGameStates::Running;
+			GameInstance->SetState(EGameStates::Running);
 			break;
 		default:
 			break;
@@ -657,6 +655,10 @@ void ADwarfProjectCharacter::Die()
 		//If no death anim just destroy on the spot
 		Destroy();
 	}		
+}
+
+void ADwarfProjectCharacter::EnableDeathScreen()
+{
 }
 
 void ADwarfProjectCharacter::ResetAttackCount()
@@ -811,11 +813,6 @@ UBehaviorTree* ADwarfProjectCharacter::GetBehaviourTree()
 AAlertRadius* ADwarfProjectCharacter::GetAlertRadius()
 {
 	return AlertRadius;
-}
-
-void ADwarfProjectCharacter::SetGameState(EGameStates State)
-{
-	GameState = State;
 }
 
 bool ADwarfProjectCharacter::GetIsInvincible()

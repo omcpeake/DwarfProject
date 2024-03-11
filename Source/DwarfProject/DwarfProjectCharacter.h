@@ -92,10 +92,7 @@ private:
 
 
 public:
-
-	//Game Settings
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Settings", meta = (AllowPrivateAccess = "true"))
-	EGameStates GameState;
+	
 
 	//Unit Stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit Stats", meta = (AllowPrivateAccess = "true"))
@@ -281,8 +278,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	AAlertRadius* GetAlertRadius();
 
-	void SetGameState(EGameStates State);
-
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void EnableDeathScreen();
 
 };
 

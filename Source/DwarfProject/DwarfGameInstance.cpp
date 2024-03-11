@@ -3,3 +3,12 @@
 
 #include "DwarfGameInstance.h"
 
+EGameStates UDwarfGameInstance::GetState()
+{
+	return State;
+}
+
+void UDwarfGameInstance::SetState(EGameStates newState)
+{
+	State = newState;
+}

@@ -15,11 +15,16 @@ class DWARFPROJECT_API UDwarfGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-	public:
-		EGameStates State;
 
-		//only needs to be set when changing levels
-		float currentHealth;
-		
+private:
+	EGameStates State;
+
+	//only needs to be set when changing levels
+	float currentHealth;
+
+
+public:
+		EGameStates GetState();
+		void SetState(EGameStates newState);
 	
 };

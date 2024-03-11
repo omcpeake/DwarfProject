@@ -20,12 +20,17 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartGameButtonOnClicked()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), "Level1");
-	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetWorld()->GetGameInstance());
+
+	RemoveFromViewport();	
+	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
-		GameInstance->State = EGameStates::Running;
+		GameInstance->SetState(EGameStates::Running);
+		
 	}
+
+	UGameplayStatics::OpenLevel(GetWorld(), "Level1");
+	
 }
 
 void UMainMenu::QuitButtonOnClicked()

@@ -32,7 +32,7 @@ void UPauseMenu::ResumeButtonOnClicked()
 	
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	
-	GameInstance->State = EGameStates::Running;
+	GameInstance->SetState(EGameStates::Running);
 	
 	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 	MyPlayer->SetPause(false);
@@ -44,7 +44,7 @@ void UPauseMenu::ResumeButtonOnClicked()
 void UPauseMenu::ReturnToMenuButtonOnClicked()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
-	GameInstance->State = EGameStates::Menu;
+	GameInstance->SetState(EGameStates::Menu);
 }
 
 void UPauseMenu::QuitButtonOnClicked()
