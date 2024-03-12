@@ -155,7 +155,7 @@ public:
 
 	class AAlertRadius* AlertRadius;
 
-	//UI and HUD
+	/////////////////////////////////////UI and HUD
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UDwarfHud> PlayerHUDClass;
 	UPROPERTY()
@@ -166,13 +166,17 @@ public:
 	UPROPERTY()
 	class UMainMenu* MainMenu;
 
-
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UPauseMenu> PauseMenuClass;
 	UPROPERTY()
 	class UPauseMenu* PauseMenu;
 
-	//AI
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UDeathScreen> DeathScreenClass;
+	UPROPERTY()
+	class UDeathScreen* DeathScreen;
+
+	///////////////////////////////////////////AI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	bool HasAI;
 

@@ -18,6 +18,7 @@
 #include "DwarfHud.h"
 #include "PauseMenu.h"
 #include "MainMenu.h"
+#include "DeathScreen.h"
 #include "Blueprint/UserWidget.h"
 
 #include "BaseEnemyAIController.h"
@@ -296,10 +297,7 @@ void ADwarfProjectCharacter::SetupAlertRadius()
 			}
 		}
 	}
-
-
 }
-
 
 void ADwarfProjectCharacter::Move(const FInputActionValue& Value)
 {
@@ -659,6 +657,15 @@ void ADwarfProjectCharacter::Die()
 
 void ADwarfProjectCharacter::EnableDeathScreen()
 {
+	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+	MyPlayer->SetPause(true);
+	MyPlayer->bShowMouseCursor = true;
+
+	DeathScreen = CreateWidget<UDeathScreen>(GetWorld(), DeathScreenClass);
+	if (DeathScreen)
+	{
+		DeathScreen->AddToViewport();
+	}
 }
 
 void ADwarfProjectCharacter::ResetAttackCount()
