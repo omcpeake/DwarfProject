@@ -36,8 +36,9 @@ void UDeathScreen::RestartButtonOnClicked()
 
 void UDeathScreen::ReturnToMenuButtonOnClicked()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 	GameInstance->SetState(EGameStates::Menu);
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	
 }
 
 void UDeathScreen::QuitButtonOnClicked()

@@ -178,13 +178,15 @@ public:
 
 	/////////////////////////////////////////// AUDIO
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* SwingSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* InjuredSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* ParrySound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
-	USoundBase* Footstep;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* FootstepSound;
 
 	
 
@@ -283,6 +285,16 @@ public:
 	void ParryEnd();
 	UFUNCTION(BlueprintCallable, Category = "Parry")
 	void ParryCooldownEnd();
+	UFUNCTION(BlueprintCallable, Category = "Audio")
+	void PlayFootstep();
+	UFUNCTION(BlueprintCallable, Category = "Audio")
+	void PlaySwingSound();
+
+
+
+
+
+
 
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
 	bool GetIsInvincible();

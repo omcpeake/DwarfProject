@@ -780,6 +780,16 @@ void ADwarfProjectCharacter::ParryCooldownEnd()
 	}
 }
 
+void ADwarfProjectCharacter::PlayFootstep()
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSound, GetActorLocation());
+}
+
+void ADwarfProjectCharacter::PlaySwingSound()
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SwingSound, GetActorLocation());
+}
+
 ////////////////////////// Getters //////////////////////////
 
 float ADwarfProjectCharacter::GetCurrentHealth()

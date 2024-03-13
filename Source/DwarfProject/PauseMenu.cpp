@@ -43,8 +43,9 @@ void UPauseMenu::ResumeButtonOnClicked()
 
 void UPauseMenu::ReturnToMenuButtonOnClicked()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 	GameInstance->SetState(EGameStates::Menu);
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	
 }
 
 void UPauseMenu::QuitButtonOnClicked()
