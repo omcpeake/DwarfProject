@@ -23,7 +23,6 @@
 
 #include "BaseEnemyAIController.h"
 
-
 #include "DwarfGameInstance.h"
 
 
@@ -105,8 +104,6 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	PlayerHUD = nullptr;
 }
 
-
-
 void ADwarfProjectCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -117,15 +114,9 @@ void ADwarfProjectCharacter::BeginPlay()
 	//GameState = EGameStates::Running;
 	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
-	//if (GameInstance)
-	//{
-	//	//Gamestate set in blueprint just for development, in release just set to menu
-	//	GameInstance->SetState(GameState);
-	//}
-	//else
-	//{
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("GameInstance not found"));
-	//}
+	
+	//This is just for development, in release dont set it
+	GameInstance->SetState(EGameStates::Running);
 
 	switch (GameInstance->GetState())
 	{
@@ -136,10 +127,7 @@ void ADwarfProjectCharacter::BeginPlay()
 		SetupPlayer();
 	default:
 		break;
-	}
-
-	
-	
+	}	
 }
 
 void ADwarfProjectCharacter::Tick(float DeltaTime)
@@ -264,27 +252,22 @@ void ADwarfProjectCharacter::SetupStimulusSource()
 }
 
 void ADwarfProjectCharacter::SetupAlertRadius()
-{	
-	// You should ensure the Actor class is valid before spawning,
-// otherwise you'll most likely crash the application!
+{	 
 	if (IsValid(AlertRadiusClass))
 	{
-		// We need a pointer to the level we want to spawn the Actor in.
-		// You can get the persistent level from any Actor or Component with GetWorld()
+		// We need a pointer to the level we want to spawn the Actor in. You can get the persistent level from any Actor or Component with GetWorld()
 		UWorld* MyLevel = GetWorld();
 
 		// You should ensure the level is valid before spawning, or you could crash the engine!
 		// This is important if your spawn code could run from the Editor by any reason.
 		if (IsValid(MyLevel))
 		{
-			// You can determine the spawned Actor's initial location, rotation and scale.
-			// Here we're just setting it to the spawner's transform.
+			// You can determine the spawned Actor's initial location, rotation and scale. Here we're just setting it to the spawner's transform.
 			// NOTE: depending on your Actor settings, this could prevent spawning if the location is obstructed!
 			FTransform SpawnTransform = GetActorTransform();
 
 			// Use UWorld->SpawnActor<>() to spawn.
-			// It will return a cast pointer of the Actor type you specified.
-			// There's several variants of the function that allow extra customization.
+			// It will return a cast pointer of the Actor type you specified. There's several variants of the function that allow extra customization.
 			// Here we just pass the Actor class for reflection support, and the transform.
 			AlertRadius = MyLevel->SpawnActor<AAlertRadius>(AlertRadiusClass, SpawnTransform);
 			AlertRadius->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
