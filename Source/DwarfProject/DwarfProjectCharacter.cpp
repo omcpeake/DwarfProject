@@ -25,8 +25,6 @@
 #include "Blueprint/UserWidget.h"
 #include "BaseEnemyAIController.h"
 #include "DwarfGameInstance.h"
-#include <AudioDevice.h>
-
 
 
 #define ENABLE_DEBUG_DRAW 1
@@ -571,17 +569,17 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	//Do not take damage if invincible
 	if (!IsInvincible)
 	{
-		CurrentHealth -= Damage;
-
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), InjuredSound, GetActorLocation());
+		CurrentHealth -= Damage;		
 
 		if (CurrentHealth <= 0)
-		{
+		{			
 			CurrentHealth = 0;
+			
 			Die();
 		}
 		else
 		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InjuredSound, GetActorLocation());
 			//If youre not dead get invincibility frames
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
@@ -614,6 +612,7 @@ void ADwarfProjectCharacter::RecieveHealth(float Healing)
 void ADwarfProjectCharacter::Die()
 {
 	IsDead = true;
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
 	if (IsValid(DeathMontage))
 	{
 		MovementDisabled = true;
