@@ -27,8 +27,13 @@ class DWARFPROJECT_API AHealthPickup : public AActor
 
 	URotatingMovementComponent* Rotation;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthPickupSetup", meta = (AllowPrivateAccess = "true"))
 	float HealingAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* HealSound;
 
 
 	UFUNCTION()

@@ -6,6 +6,8 @@
 #include "DwarfProjectCharacter.h"
 #include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
+#include "DwarfHud.h"
+#include "Kismet/GameplayStatics.h"
 
 AHealthPickup::AHealthPickup()
 {
@@ -38,9 +40,16 @@ void AHealthPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 		ADwarfProjectCharacter* Entity = Cast<ADwarfProjectCharacter>(OtherActor);
 		if (Entity)
 		{
-			Entity->RecieveHealth(HealingAmount);
+			// if the entity is not an AI and is not at full health, heal it and destroy the pickup
+			if (!Entity->GetHasAI() && Entity->GetCurrentHealth()!=Entity->GetMaxHealth())
+			{
+				Entity->RecieveHealth(HealingAmount);
+				//update the HUD
+				Entity->GetPlayerHUD()->SetHealth(Entity->GetCurrentHealth(), Entity->GetMaxHealth());
+				//Play sound
+				UGameplayStatics::PlaySoundAtLocation(this, HealSound, GetActorLocation());
+				Destroy();
+			}			
 		}
-	}
-
-	Destroy();
+	}	
 }

@@ -176,6 +176,19 @@ public:
 	UPROPERTY()
 	class UDeathScreen* DeathScreen;
 
+	/////////////////////////////////////////// AUDIO
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* InjuredSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
+	USoundBase* ParrySound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
+	USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivate))
+	USoundBase* Footstep;
+
+	
+
+
 	///////////////////////////////////////////AI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	bool HasAI;
@@ -242,6 +255,10 @@ public:
 
 public:
 	//UFunctions
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetCurrentHealth();
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetMaxHealth();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	float GetBaseDamage();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
@@ -284,6 +301,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void EnableDeathScreen();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	UDwarfHud* GetPlayerHUD();
 
 };
 

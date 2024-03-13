@@ -7,23 +7,25 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "DrawDebugHelpers.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+
 #include "DwarfHud.h"
 #include "PauseMenu.h"
 #include "MainMenu.h"
 #include "DeathScreen.h"
 #include "Blueprint/UserWidget.h"
-
 #include "BaseEnemyAIController.h"
-
 #include "DwarfGameInstance.h"
+#include <AudioDevice.h>
 
 
 
@@ -570,6 +572,9 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	if (!IsInvincible)
 	{
 		CurrentHealth -= Damage;
+
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), InjuredSound, GetActorLocation());
+
 		if (CurrentHealth <= 0)
 		{
 			CurrentHealth = 0;
@@ -651,6 +656,11 @@ void ADwarfProjectCharacter::EnableDeathScreen()
 	}
 }
 
+UDwarfHud* ADwarfProjectCharacter::GetPlayerHUD()
+{
+	return PlayerHUD;
+}
+
 void ADwarfProjectCharacter::ResetAttackCount()
 {
 	AttackCount = 1;
@@ -704,9 +714,11 @@ void ADwarfProjectCharacter::DetectHit()
 				{
 					//Parry anim before taking damage otherwise it breaks
 					PlayAnimMontage(ParryStunMontage);
-					//TODO - Play sound on parry
 
-					//else take half the damage yourself, idiot
+					//Play sound
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySound, GetActorLocation());
+
+					//take half the damage yourself, idiot
 					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, ParryKnockback);
 					//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
 					
@@ -769,6 +781,16 @@ void ADwarfProjectCharacter::ParryCooldownEnd()
 }
 
 ////////////////////////// Getters //////////////////////////
+
+float ADwarfProjectCharacter::GetCurrentHealth()
+{
+	return CurrentHealth;
+}
+
+float ADwarfProjectCharacter::GetMaxHealth()
+{
+	return MaxHealth;
+}
 
 float ADwarfProjectCharacter::GetBaseDamage()
 {
