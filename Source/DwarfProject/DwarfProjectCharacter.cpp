@@ -618,7 +618,7 @@ void ADwarfProjectCharacter::Die()
 		MovementDisabled = true;
 		CanParry = false;
 		CanAttack = false;
-		CanDodge = false;
+		CanDodge = false; 
 		CanSprint = false;
 
 		//Destroy from anim montage after death anim plays
@@ -637,8 +637,17 @@ void ADwarfProjectCharacter::Die()
 	}
 	else
 	{
-		//If no death anim just destroy on the spot
-		Destroy();
+		if (HasAI)
+		{
+			//If no death anim just destroy on the spot
+			Destroy();
+		}
+		else
+		{
+			//but if its the player then show the death screen
+			EnableDeathScreen();
+		}
+		
 	}		
 }
 
@@ -673,9 +682,10 @@ void ADwarfProjectCharacter::IFrameEnd()
 void ADwarfProjectCharacter::DetectHit()
 {
 	//https://medium.com/@coderfromnineteen/unreal-from-zero-to-hero-10-collision-detection-and-damage-5b9934af1029
-	FHitResult HitResult;
+	//FHitResult HitResult;
+	TArray<FHitResult> HitResult;
 	FCollisionQueryParams QueryParams(NAME_None, false, this);
-	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResult,
 		GetActorLocation() + GetActorForwardVector() * HitboxOffset,
 		GetActorLocation() + GetActorForwardVector() * (AttackRange + HitboxOffset),
 		FQuat::Identity,
@@ -696,34 +706,39 @@ void ADwarfProjectCharacter::DetectHit()
 	
 	if (bHit)
 	{
-		if (HitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
-		{			
-			//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy"));
-			ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(HitResult.GetActor());			
-
-			//Check if target allignment is the same as ours, dont try to damage them
-			if (IsHostile != Target->GetIsHostile())
+		for (auto& LoopHitResult : HitResult)
+		{
+			if (LoopHitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
 			{
-				if (Target->ParryActive == false)
+				
+				//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy")); 
+				ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(LoopHitResult.GetActor());
+
+				//Check if target allignment is the same as ours, dont try to damage them
+				if (IsHostile != Target->GetIsHostile())
 				{
-					//if target is not parrying, deal damage
-					Target->RecieveDamage(GetBaseDamage(), GetActorForwardVector(),	AttackKnockback);
+					if (Target->ParryActive == false)
+					{
+						//if target is not parrying, deal damage
+						Target->RecieveDamage(GetBaseDamage(), GetActorForwardVector(), AttackKnockback);
+					}
+					else
+					{
+						//Parry anim before taking damage otherwise it breaks
+						PlayAnimMontage(ParryStunMontage);
+
+						//Play sound
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySound, GetActorLocation());
+
+						//take half the damage yourself, idiot
+						RecieveDamage(GetBaseDamage() / 2, GetActorForwardVector() * -1, ParryKnockback);
+						//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
+
+					}
 				}
-				else
-				{
-					//Parry anim before taking damage otherwise it breaks
-					PlayAnimMontage(ParryStunMontage);
-
-					//Play sound
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySound, GetActorLocation());
-
-					//take half the damage yourself, idiot
-					RecieveDamage(GetBaseDamage()/2, GetActorForwardVector()*-1, ParryKnockback);
-					//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
-					
-				}				
-			}			
+			}
 		}
+		
 	}
 }
 
