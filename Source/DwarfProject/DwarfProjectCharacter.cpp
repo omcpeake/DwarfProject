@@ -709,8 +709,7 @@ void ADwarfProjectCharacter::DetectHit()
 		for (auto& LoopHitResult : HitResult)
 		{
 			if (LoopHitResult.GetActor()->IsA(ADwarfProjectCharacter::StaticClass()))
-			{
-				
+			{			
 				//UE_LOG(LogTemp, Warning, TEXT("Hit Enemy")); 
 				ADwarfProjectCharacter* Target = Cast<ADwarfProjectCharacter>(LoopHitResult.GetActor());
 
@@ -737,8 +736,7 @@ void ADwarfProjectCharacter::DetectHit()
 					}
 				}
 			}
-		}
-		
+		}	
 	}
 }
 
