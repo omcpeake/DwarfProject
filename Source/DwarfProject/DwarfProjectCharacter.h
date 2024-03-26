@@ -176,6 +176,9 @@ public:
 	UPROPERTY()
 	class UDeathScreen* DeathScreen;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UCameraShakeBase> CamShake;
+
 	/////////////////////////////////////////// AUDIO
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* SwingSound;
