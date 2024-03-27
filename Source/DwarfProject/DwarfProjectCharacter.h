@@ -176,8 +176,15 @@ public:
 	UPROPERTY()
 	class UDeathScreen* DeathScreen;
 
-	UPROPERTY(EditAnywhere, Category = "UI")
+	/////////////////////////////////////////// FOOTSTEPS
+	UPROPERTY(EditAnywhere, Category = "Footstep")
 	TSubclassOf<class UCameraShakeBase> CamShake;
+	UPROPERTY(EditAnywhere, Category = "Footstep")
+	float FootstepCamshakeInnerRadius;
+	UPROPERTY(EditAnywhere, Category = "Footstep")
+	float FootstepCamshakeOuterRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Footstep", meta = (AllowPrivateAccess = "true"))
+	USoundBase* FootstepSound;
 
 	/////////////////////////////////////////// AUDIO
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
@@ -188,8 +195,7 @@ public:
 	USoundBase* ParrySound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
-	USoundBase* FootstepSound;
+	
 
 	
 

@@ -797,7 +797,7 @@ void ADwarfProjectCharacter::PlayFootstep()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSound, GetActorLocation());
 	if (CamShake != nullptr)
 	{
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CamShake, GetActorLocation(), 0, 1000, 1, false);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CamShake, GetActorLocation(), FootstepCamshakeInnerRadius, FootstepCamshakeOuterRadius, 1, false);
 			
 	}
 }
