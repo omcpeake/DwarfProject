@@ -175,6 +175,8 @@ public:
 	TSubclassOf<class UDeathScreen> DeathScreenClass;
 	UPROPERTY()
 	class UDeathScreen* DeathScreen;
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UCameraShakeBase> OnDamageCamShake;
 
 	/////////////////////////////////////////// FOOTSTEPS
 	UPROPERTY(EditAnywhere, Category = "Footstep")

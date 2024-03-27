@@ -335,6 +335,8 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 	{
 		// use attack 1 as default value
 		UAnimMontage* CurrentAttack = Attack1Montage;
+		
+		
 
 		if(Rand)
 		{
@@ -360,6 +362,7 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 			//Reset the attack timer when we start attack
 			GetWorld()->GetTimerManager().ClearTimer(AttackAnimResetTimerHandle);
 			DashForward(AttackDashVal);
+			bUseControllerRotationYaw = true;
 			
 			AttackCount++;
 
@@ -569,17 +572,27 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	//Do not take damage if invincible
 	if (!IsInvincible)
 	{
-		CurrentHealth -= Damage;		
+		CurrentHealth -= Damage;
+		
 
 		if (CurrentHealth <= 0)
-		{			
+		{	
+			//if your health is 0 then you are dead :)
 			CurrentHealth = 0;
 			
 			Die();
 		}
 		else
 		{
+			//shake the screen for more feedback
+			if (OnDamageCamShake != nullptr)
+			{
+				GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(OnDamageCamShake, 1.0f);
+			}
+
+			//Play the injured sound
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InjuredSound, GetActorLocation());
+
 			//If youre not dead get invincibility frames
 			IsInvincible = true;
 			GetWorld()->GetTimerManager().SetTimer(IFrameTimerHandle, this, &ADwarfProjectCharacter::IFrameEnd, IframeTime, false);
@@ -751,6 +764,7 @@ void ADwarfProjectCharacter::AttackEnd()
 	CanAttack = true;
 	CanDodge = true;
 	MovementDisabled = false;
+	bUseControllerRotationYaw = false;
 	//Only enable parry if it is not on cooldown
 	if (ParryOnCooldown == false)
 	{
