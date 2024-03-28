@@ -25,6 +25,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BaseEnemyAIController.h"
 #include "DwarfGameInstance.h"
+#include "DwarfProjectGameMode.h"
 
 
 #define ENABLE_DEBUG_DRAW 1
@@ -133,7 +134,6 @@ void ADwarfProjectCharacter::BeginPlay()
 void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -169,6 +169,14 @@ void ADwarfProjectCharacter::SetupPlayer()
 	if (HasAI)
 	{
 		SetupAlertRadius();
+	}
+	if (IsHostile)
+	{
+		ADwarfProjectGameMode* GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GameMode)
+		{
+			GameMode->IncrementEnemyCount();
+		}
 	}
 
 	//Store the walk speed set in the blueprint
@@ -334,10 +342,7 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 	if (CanAttack)
 	{
 		// use attack 1 as default value
-		UAnimMontage* CurrentAttack = Attack1Montage;
-		
-		
-
+		UAnimMontage* CurrentAttack = Attack1Montage;			
 		if(Rand)
 		{
 			//Used to randomize the attack, primarily for the AI
@@ -376,10 +381,6 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 
 			//Start the timer again at the end of the attack
 			GetWorld()->GetTimerManager().SetTimer(AttackAnimResetTimerHandle, this, &ADwarfProjectCharacter::ResetAttackCount, AttackAnimResetTime, false);
-		}
-		else
-		{
-			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Attack Montage!"), *GetNameSafe(this));
 		}
 	}
 }
@@ -556,7 +557,6 @@ void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirect
 		//If damage was dealt then apply knockback
 		LaunchCharacter(KnockbackDirection * KnockbackAmount, false, false);
 	}
-
 }
 
 void ADwarfProjectCharacter::RecieveDamage(float Damage)
@@ -573,7 +573,6 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	if (!IsInvincible)
 	{
 		CurrentHealth -= Damage;
-		
 
 		if (CurrentHealth <= 0)
 		{	
@@ -589,7 +588,6 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 			{
 				GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(OnDamageCamShake, 1.0f);
 			}
-
 			//Play the injured sound
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InjuredSound, GetActorLocation());
 
@@ -601,10 +599,8 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 		if (PlayerHUD)
 		{
 			PlayerHUD->SetHealth(CurrentHealth, MaxHealth);
-		}
-		
-		return true;
-		
+		}		
+		return true;		
 	}
 	else
 	{
@@ -626,6 +622,14 @@ void ADwarfProjectCharacter::Die()
 {
 	IsDead = true;
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
+	if (IsHostile)
+	{
+		ADwarfProjectGameMode* GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GameMode)
+		{
+			GameMode->DecrementEnemyCount();
+		}
+	}
 	if (IsValid(DeathMontage))
 	{
 		MovementDisabled = true;
@@ -645,8 +649,9 @@ void ADwarfProjectCharacter::Die()
 			if (myBaseEnemyAIController)
 			{
 				myBaseEnemyAIController->SetStateAsDead();
-			}			
+			}					
 		}
+		
 	}
 	else
 	{

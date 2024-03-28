@@ -11,8 +11,18 @@ class ADwarfProjectGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	ADwarfProjectGameMode();
+
+	int EnemyCount=0;
+	bool DoorOpened = false;
+
+	void IncrementEnemyCount();
+	void DecrementEnemyCount();
 };
 
 

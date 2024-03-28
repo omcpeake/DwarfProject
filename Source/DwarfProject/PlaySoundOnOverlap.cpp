@@ -28,3 +28,5 @@ void APlaySoundOnOverlap::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AA
 		Destroy();
 	}
 }
+
+
