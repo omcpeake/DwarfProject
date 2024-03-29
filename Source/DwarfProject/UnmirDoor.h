@@ -44,6 +44,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "DoorProperties")
 	float ZOffset;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* OpenSound;
+
 
 	
 	

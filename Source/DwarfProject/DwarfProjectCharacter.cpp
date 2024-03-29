@@ -366,8 +366,10 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 			//Timer to reset back to attack anim 1 after a certain amount of time of not attacking
 			//Reset the attack timer when we start attack
 			GetWorld()->GetTimerManager().ClearTimer(AttackAnimResetTimerHandle);
-			DashForward(AttackDashVal);
 			bUseControllerRotationYaw = true;
+			
+			
+			
 			
 			AttackCount++;
 
@@ -376,9 +378,10 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 			CanParry = false;
 
 			PlayAnimMontage(CurrentAttack);
+			GetCharacterMovement()->StopMovementImmediately();
 			//cant change direction once attack has started
 			MovementDisabled = true;
-
+			//DashForward(AttackDashVal);
 			//Start the timer again at the end of the attack
 			GetWorld()->GetTimerManager().SetTimer(AttackAnimResetTimerHandle, this, &ADwarfProjectCharacter::ResetAttackCount, AttackAnimResetTime, false);
 		}

@@ -3,6 +3,7 @@
 
 #include "UnmirDoor.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -51,4 +52,5 @@ void AUnmirDoor::OpenDoor()
 {
 	CurveTimeline.PlayFromStart();
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Door Opened"));
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 }
