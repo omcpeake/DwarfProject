@@ -37,6 +37,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ADwarfProjectCharacter::ADwarfProjectCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	//GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("DwarfProjectCharacter"));
@@ -97,6 +99,7 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	
 	IframeTime = 0.3f;
 	
+	SlowdownTimeResetTime = 0.02f;
 
 	SetupStimulusSource();
 
@@ -115,6 +118,18 @@ void ADwarfProjectCharacter::BeginPlay()
 	//GameState = EGameStates::Running;
 	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+
+	if (CurveFloat)
+	{
+		FOnTimelineFloat TimelineProgress;
+		TimelineProgress.BindUFunction(this, FName("TimelineProgress"));
+
+		CurveTimeline.AddInterpFloat(CurveFloat, TimelineProgress);
+		CurveTimeline.SetLooping(false);
+
+
+	}
+
 	
 	//This is just for development, in release dont set it
 	GameInstance->SetState(EGameStates::Running);
@@ -134,6 +149,7 @@ void ADwarfProjectCharacter::BeginPlay()
 void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CurveTimeline.TickTimeline(DeltaTime);
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -367,10 +383,7 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 			//Reset the attack timer when we start attack
 			GetWorld()->GetTimerManager().ClearTimer(AttackAnimResetTimerHandle);
 			bUseControllerRotationYaw = true;
-			
-			
-			
-			
+				
 			AttackCount++;
 
 			CanAttack = false;
@@ -612,6 +625,26 @@ bool ADwarfProjectCharacter::HandleDamage(float Damage)
 	}
 }
 
+void ADwarfProjectCharacter::SlowdownTime(float TimeDilation, float TimeToReturn)
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);	
+	GetWorld()->GetTimerManager().SetTimer(SlowdownTimeTimerHandle, this, &ADwarfProjectCharacter::ResetTimeDilation, TimeToReturn, false);
+}
+
+void ADwarfProjectCharacter::ResetTimeDilation()
+{
+	CurveTimeline.PlayFromStart();
+	
+}
+
+void ADwarfProjectCharacter::TimelineProgress(float Value)
+{
+	float NewDilationVal = FMath::Lerp(0.1f, 1.0f, Value);
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), NewDilationVal);
+
+}
+
 void ADwarfProjectCharacter::RecieveHealth(float Healing)
 {
 	CurrentHealth += Healing;
@@ -741,6 +774,7 @@ void ADwarfProjectCharacter::DetectHit()
 					{
 						//if target is not parrying, deal damage
 						Target->RecieveDamage(GetBaseDamage(), GetActorForwardVector(), AttackKnockback);
+						
 					}
 					else
 					{
@@ -749,6 +783,9 @@ void ADwarfProjectCharacter::DetectHit()
 
 						//Play sound
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySound, GetActorLocation());
+
+						//Slowdown time
+						SlowdownTime(0.1f, SlowdownTimeResetTime);
 
 						//take half the damage yourself, idiot
 						RecieveDamage(GetBaseDamage() / 2, GetActorForwardVector() * -1, ParryKnockback);

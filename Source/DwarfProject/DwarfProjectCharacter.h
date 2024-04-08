@@ -8,6 +8,7 @@
 #include "WeaponBase.h"
 #include "AlertRadius.h"
 #include "EGameStates.h"
+#include "Components/TimelineComponent.h"
 
 #include "DwarfProjectCharacter.generated.h"
 
@@ -17,6 +18,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+
 
 class UAnimMontage;
 
@@ -199,6 +201,16 @@ public:
 	USoundBase* DeathSound;
 	
 
+	////////////////////////////////////// PARRY SLOWDOWN
+	FTimerHandle SlowdownTimeTimerHandle;
+	float SlowdownTimeResetTime;
+
+	FTimeline CurveTimeline;
+	UPROPERTY(EditAnywhere, Category = "ParrySlowdownEffect")
+	UCurveFloat* CurveFloat;
+
+	UFUNCTION()
+	void TimelineProgress(float Value);
 	
 
 
@@ -249,7 +261,13 @@ protected:
 
 	void SetupAlertRadius();
 
-	bool HandleDamage(float Damage);				
+	bool HandleDamage(float Damage);		
+
+
+	void SlowdownTime(float TimeDilation, float TimeToReturn);
+	void ResetTimeDilation();
+
+	
 
 protected:
 	// APawn interface
