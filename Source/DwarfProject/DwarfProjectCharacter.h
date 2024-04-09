@@ -198,6 +198,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* ParrySound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* ParryReadySound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
 	
 
@@ -208,6 +210,9 @@ public:
 	FTimeline CurveTimeline;
 	UPROPERTY(EditAnywhere, Category = "ParrySlowdownEffect")
 	UCurveFloat* CurveFloat;
+
+	UPROPERTY(EditAnywhere, Category = "Footstep")
+	TSubclassOf<class UCameraShakeBase> ParryCamShake;
 
 	UFUNCTION()
 	void TimelineProgress(float Value);

@@ -490,13 +490,11 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 			if (PauseMenu)
 			{
 				PauseMenu->AddToViewport();
-
 				
 				if (MyPlayer)
 				{
 					MyPlayer->SetPause(true);
 					MyPlayer->bShowMouseCursor = true;
-
 				}
 			}
 			GameInstance->SetState(EGameStates::Paused);
@@ -629,6 +627,10 @@ void ADwarfProjectCharacter::SlowdownTime(float TimeDilation, float TimeToReturn
 {
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);	
 	GetWorld()->GetTimerManager().SetTimer(SlowdownTimeTimerHandle, this, &ADwarfProjectCharacter::ResetTimeDilation, TimeToReturn, false);
+	if (ParryCamShake != nullptr)
+	{
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ParryCamShake, 1.0f);
+	}
 }
 
 void ADwarfProjectCharacter::ResetTimeDilation()
@@ -668,6 +670,7 @@ void ADwarfProjectCharacter::Die()
 	}
 	if (IsValid(DeathMontage))
 	{
+		//disable unit
 		MovementDisabled = true;
 		CanParry = false;
 		CanAttack = false;
@@ -686,8 +689,7 @@ void ADwarfProjectCharacter::Die()
 			{
 				myBaseEnemyAIController->SetStateAsDead();
 			}					
-		}
-		
+		}	
 	}
 	else
 	{
@@ -700,8 +702,7 @@ void ADwarfProjectCharacter::Die()
 		{
 			//but if its the player then show the death screen
 			EnableDeathScreen();
-		}
-		
+		}		
 	}		
 }
 
@@ -843,6 +844,9 @@ void ADwarfProjectCharacter::ParryCooldownEnd()
 {
 	ParryOnCooldown = false;
 	CanParry = true;
+
+	//Play Sound
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParryReadySound, GetActorLocation());
 
 	//Update UI
 	if (PlayerHUD)
