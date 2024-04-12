@@ -3,6 +3,7 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
+#include "Components/Slider.h"
 #include "Kismet/GameplayStatics.h"
 #include "DwarfGameInstance.h"
 
@@ -12,6 +13,10 @@ void UMainMenu::NativeConstruct()
 	{
 		StartGameButton->OnClicked.AddDynamic(this, &UMainMenu::StartGameButtonOnClicked);
 	}
+	if (CreditsButton)
+	{
+		CreditsButton->OnClicked.AddDynamic(this, &UMainMenu::CreditsButtonOnClicked);
+	}
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitButtonOnClicked);
@@ -20,17 +25,18 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartGameButtonOnClicked()
 {
-
 	RemoveFromViewport();	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
-		GameInstance->SetState(EGameStates::Running);
-		
+		GameInstance->SetState(EGameStates::Running);		
 	}
+	UGameplayStatics::OpenLevel(GetWorld(), "Level1");	
+}
 
-	UGameplayStatics::OpenLevel(GetWorld(), "Level1");
-	
+void UMainMenu::CreditsButtonOnClicked()
+{
+
 }
 
 void UMainMenu::QuitButtonOnClicked()

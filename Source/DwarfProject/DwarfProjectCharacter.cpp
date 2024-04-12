@@ -28,7 +28,7 @@
 #include "DwarfProjectGameMode.h"
 
 
-#define ENABLE_DEBUG_DRAW 1
+#define ENABLE_DRAW_DEBUG 0
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -112,10 +112,6 @@ void ADwarfProjectCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-	//TODO start with state as menu and then change to running
-	
-	//GameState = EGameStates::Running;
 	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 
@@ -126,13 +122,10 @@ void ADwarfProjectCharacter::BeginPlay()
 
 		CurveTimeline.AddInterpFloat(CurveFloat, TimelineProgress);
 		CurveTimeline.SetLooping(false);
-
-
 	}
-
 	
 	//This is just for development, in release dont set it
-	GameInstance->SetState(EGameStates::Running);
+	//GameInstance->SetState(EGameStates::Running);
 
 	switch (GameInstance->GetState())
 	{
@@ -173,7 +166,6 @@ void ADwarfProjectCharacter::SetupPlayer()
 		{
 			PlayerHUD->SetHealth(CurrentHealth, MaxHealth);
 			PlayerHUD->AddToViewport();
-
 		}
 	}
 
@@ -194,7 +186,6 @@ void ADwarfProjectCharacter::SetupPlayer()
 			GameMode->IncrementEnemyCount();
 		}
 	}
-
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	SprintSpeed = WalkSpeed * 1.8f;
@@ -215,7 +206,6 @@ void ADwarfProjectCharacter::EnableMainMenu()
 			{
 				MyPlayer->SetPause(true);
 				MyPlayer->bShowMouseCursor = true;
-
 			}
 		}					
 	}
@@ -374,8 +364,7 @@ void ADwarfProjectCharacter::MakeAttack(bool Rand)
 		{
 			CurrentAttack = Attack3Montage;
 			AttackCount = 0;
-		}		
-		
+		}			
 		//verify that the attack is not null
 		if (IsValid(CurrentAttack))
 		{
@@ -438,7 +427,6 @@ void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 
 		//Parry has a cooldown
 		GetWorld()->GetTimerManager().SetTimer(ParryCooldownTimerHandle, this, &ADwarfProjectCharacter::ParryCooldownEnd, ParryCooldown, false);
-
 		//Update Ui
 		if (PlayerHUD)
 		{
@@ -516,11 +504,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 		}
 	}
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void ADwarfProjectCharacter::AttachWeapon()
 {
 	// You should ensure the Actor class is valid before spawning, otherwise you'll most likely crash the application!
@@ -556,10 +540,7 @@ void ADwarfProjectCharacter::AttachWeapon()
 		}
 	}	
 }
-
-
 ////////////////////////////// Attack Functions //////////////////////////////
-
 void ADwarfProjectCharacter::RecieveDamage(float Damage, FVector KnockbackDirection, float KnockbackAmount)
 {
 	//If you are dead then dont take damage
@@ -660,6 +641,7 @@ void ADwarfProjectCharacter::Die()
 {
 	IsDead = true;
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
+	
 	if (IsHostile)
 	{
 		ADwarfProjectGameMode* GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -679,7 +661,7 @@ void ADwarfProjectCharacter::Die()
 
 		//Destroy from anim montage after death anim plays
 		PlayAnimMontage(DeathMontage);
-
+		bUseControllerRotationYaw = false;
 		//If the actor is controlled by BT then set state as dead to disable it
 		if (HasAI)
 		{
@@ -781,17 +763,13 @@ void ADwarfProjectCharacter::DetectHit()
 					{
 						//Parry anim before taking damage otherwise it breaks
 						PlayAnimMontage(ParryStunMontage);
-
 						//Play sound
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySound, GetActorLocation());
-
 						//Slowdown time
 						SlowdownTime(0.1f, SlowdownTimeResetTime);
-
 						//take half the damage yourself, idiot
 						RecieveDamage(GetBaseDamage() / 2, GetActorForwardVector() * -1, ParryKnockback);
 						//Stun animation will assume normal attack restrictions are still in place and will use the end attack notify to re-enable them
-
 					}
 				}
 			}

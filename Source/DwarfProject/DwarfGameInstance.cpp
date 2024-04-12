@@ -12,3 +12,13 @@ void UDwarfGameInstance::SetState(EGameStates newState)
 {
 	State = newState;
 }
+
+float UDwarfGameInstance::GetSliderVolume()
+{
+	return SliderVolume;
+}
+
+void UDwarfGameInstance::SetSliderVolume(float newVolume)
+{
+	SliderVolume = newVolume;
+}
