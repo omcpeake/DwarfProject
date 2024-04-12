@@ -13,6 +13,7 @@ UENUM(BlueprintType)
 enum class EGameStates : uint8
 {
 	Menu,
+	Credits,
 	Running,
 	Paused,
 	Dead

@@ -22,12 +22,10 @@ private:
 	//only needs to be set when changing levels
 	float currentHealth;
 
-	float SliderVolume = 1;
+	float SliderVolume = 0.8f;
 
 
 public:
-	float testval = 1;
-
 		UFUNCTION(BlueprintCallable, Category = "Game State")
 		EGameStates GetState();
 		UFUNCTION(BlueprintCallable, Category = "Game State")
