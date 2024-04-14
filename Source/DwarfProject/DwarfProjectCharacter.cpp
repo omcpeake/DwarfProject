@@ -125,7 +125,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	}
 	
 	//This is just for development, in release dont set it
-	//GameInstance->SetState(EGameStates::Running);
+	GameInstance->SetState(EGameStates::Running);
 
 	switch (GameInstance->GetState())
 	{

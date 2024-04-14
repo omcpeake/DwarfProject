@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "DwarfGameInstance.h"
 #include "DeathScreen.h"
+#include "DwarfProjectCharacter.h"
 
 
 // Sets default values
@@ -24,13 +25,17 @@ AGameEndBox::AGameEndBox()
 
 void AGameEndBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
-	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
-	MyPlayer->SetPause(true);
-	MyPlayer->bShowMouseCursor = true;
+	ADwarfProjectCharacter* Player = Cast<ADwarfProjectCharacter>(OtherActor);
+	if (Player->GetHasAI() == false)
+	{
+		UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+		MyPlayer->SetPause(true);
+		MyPlayer->bShowMouseCursor = true;
 
-	GameEndScreen = CreateWidget<UDeathScreen>(GetWorld(), GameEndScreenClass);
-	GameEndScreen->AddToViewport();
+		GameEndScreen = CreateWidget<UDeathScreen>(GetWorld(), GameEndScreenClass);
+		GameEndScreen->AddToViewport();
+	}	
 }
 
 void AGameEndBox::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

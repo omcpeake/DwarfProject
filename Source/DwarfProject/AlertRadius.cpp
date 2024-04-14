@@ -12,7 +12,7 @@ AAlertRadius::AAlertRadius()
 {
 	AlertSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AlertSphere"));
 	AlertSphere->SetupAttachment(RootComponent);
-	AlertSphere->SetSphereRadius(800.0f);
+	AlertSphere->SetSphereRadius(1000.0f);
 	AlertSphere->SetCollisionProfileName("Trigger");
 	AlertSphere->OnComponentBeginOverlap.AddDynamic(this, &AAlertRadius::OnOverlapBegin);
 	AlertSphere->OnComponentEndOverlap.AddDynamic(this, &AAlertRadius::OnOverlapEnd);
