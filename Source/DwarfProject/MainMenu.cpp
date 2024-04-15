@@ -6,6 +6,7 @@
 #include "Components/Slider.h"
 #include "Kismet/GameplayStatics.h"
 #include "DwarfGameInstance.h"
+#include "DwarfProjectCharacter.h"
 
 void UMainMenu::NativeConstruct()
 {
@@ -35,8 +36,10 @@ void UMainMenu::StartGameButtonOnClicked()
 }
 
 void UMainMenu::CreditsButtonOnClicked()
-{
-
+{	
+	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+	ADwarfProjectCharacter* Player = Cast<ADwarfProjectCharacter>(MyPlayer->GetPawn());
+	Player->EnableCredits();
 }
 
 void UMainMenu::QuitButtonOnClicked()

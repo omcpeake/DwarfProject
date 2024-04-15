@@ -24,7 +24,6 @@
 #include "DeathScreen.h"
 #include "Blueprint/UserWidget.h"
 #include "BaseEnemyAIController.h"
-#include "DwarfGameInstance.h"
 #include "DwarfProjectGameMode.h"
 
 
@@ -113,7 +112,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	
-	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+	GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 
 	if (CurveFloat)
 	{
@@ -125,7 +124,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	}
 	
 	//This is just for development, in release dont set it
-	GameInstance->SetState(EGameStates::Running);
+	//GameInstance->SetState(EGameStates::Running);
 
 	switch (GameInstance->GetState())
 	{
@@ -142,7 +141,11 @@ void ADwarfProjectCharacter::BeginPlay()
 void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	CurveTimeline.TickTimeline(DeltaTime);
+
+	
+	
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -467,8 +470,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 {
 	if (PauseMenuClass)
 	{
-		UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
-
+		//UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 		switch (GameInstance->GetState())
 		{
@@ -498,6 +500,13 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 				}
 			}
 			GameInstance->SetState(EGameStates::Running);
+			break;
+		case EGameStates::Credits:			
+			if (CreditsScreen)
+			{
+				CreditsScreen->RemoveFromViewport();
+				GameInstance->SetState(EGameStates::Menu);
+			}		
 			break;
 		default:
 			break;
@@ -846,6 +855,17 @@ void ADwarfProjectCharacter::PlayFootstep()
 void ADwarfProjectCharacter::PlaySwingSound()
 {
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SwingSound, GetActorLocation());
+}
+
+void ADwarfProjectCharacter::EnableCredits()
+{
+	//Enable Credits Widget
+	GameInstance->SetState(EGameStates::Credits);
+
+	if (CreditsScreen != nullptr)
+	{
+		CreditsScreen->AddToViewport();
+	}	
 }
 
 ////////////////////////// Getters //////////////////////////

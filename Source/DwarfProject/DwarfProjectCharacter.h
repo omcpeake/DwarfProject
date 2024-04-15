@@ -9,6 +9,7 @@
 #include "AlertRadius.h"
 #include "EGameStates.h"
 #include "Components/TimelineComponent.h"
+#include "DwarfGameInstance.h"
 
 #include "DwarfProjectCharacter.generated.h"
 
@@ -64,7 +65,7 @@ class ADwarfProjectCharacter : public ACharacter
 
 private:
 
-	
+	UDwarfGameInstance* GameInstance;
 
 	//Custom Properties
 	bool CanAttack;
@@ -179,6 +180,9 @@ public:
 	class UDeathScreen* DeathScreen;
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UCameraShakeBase> OnDamageCamShake;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	class UUserWidget* CreditsScreen;
 
 	/////////////////////////////////////////// FOOTSTEPS
 	UPROPERTY(EditAnywhere, Category = "Footstep")
@@ -323,6 +327,9 @@ public:
 	void PlayFootstep();
 	UFUNCTION(BlueprintCallable, Category = "Audio")
 	void PlaySwingSound();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void EnableCredits();
 
 
 	UFUNCTION(BlueprintCallable, Category = "UnitInfo")
