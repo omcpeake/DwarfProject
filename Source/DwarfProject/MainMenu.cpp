@@ -8,6 +8,8 @@
 #include "DwarfGameInstance.h"
 #include "DwarfProjectCharacter.h"
 
+
+
 void UMainMenu::NativeConstruct()
 {
 	if (StartGameButton)
@@ -26,14 +28,19 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartGameButtonOnClicked()
 {
-	RemoveFromViewport();	
+	//RemoveFromViewport();	
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
 		GameInstance->SetState(EGameStates::Running);		
 	}
-	UGameplayStatics::OpenLevel(GetWorld(), "Level1");	
+
+
+	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
+	ADwarfProjectCharacter* Player = Cast<ADwarfProjectCharacter>(MyPlayer->GetPawn());
+	Player->EnableLoadingScreen();		
 }
+
 
 void UMainMenu::CreditsButtonOnClicked()
 {	

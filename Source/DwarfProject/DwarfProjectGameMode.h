@@ -18,7 +18,7 @@ protected:
 public:
 	ADwarfProjectGameMode();
 
-	int EnemyCount=0;
+	int EnemyCount = 0;
 	bool DoorOpened = false;
 
 	void IncrementEnemyCount();

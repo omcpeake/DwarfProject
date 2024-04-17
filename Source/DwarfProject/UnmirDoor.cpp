@@ -50,7 +50,11 @@ void AUnmirDoor::TimelineProgress(float Value)
 
 void AUnmirDoor::OpenDoor()
 {
-	CurveTimeline.PlayFromStart();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Door Opened"));
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+	//only do this in level 1 as this is the only level with a door
+	if (GetLevel()->GetName() == "Level1")
+	{
+		CurveTimeline.PlayFromStart();
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+	}
+	
 }

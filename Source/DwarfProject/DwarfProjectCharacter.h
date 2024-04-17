@@ -89,6 +89,8 @@ private:
 	float WalkSpeed;
 	float SprintSpeed;
 
+	
+
 	//UDwarfGameInstance* GameInstance;
 	
 	//ConstructorHelpers::FClassFinder<UUserWidget> WBPClassFinder(TEXT("/Game/UI/WB_UI"));
@@ -184,6 +186,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	class UUserWidget* CreditsScreen;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	class UUserWidget* LoadingScreen;
+	FTimerHandle LoadingScreenTimerHandle;
+	float LoadingScreenTime;
+
 	/////////////////////////////////////////// FOOTSTEPS
 	UPROPERTY(EditAnywhere, Category = "Footstep")
 	TSubclassOf<class UCameraShakeBase> CamShake;
@@ -205,6 +212,8 @@ public:
 	USoundBase* ParryReadySound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* SpawnSound;
 	
 
 	////////////////////////////////////// PARRY SLOWDOWN
@@ -352,6 +361,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UDwarfHud* GetPlayerHUD();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void EnableLoadingScreen();
+
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void LoadLevel1();
 
 };
 

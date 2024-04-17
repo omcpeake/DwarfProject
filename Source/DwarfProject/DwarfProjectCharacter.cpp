@@ -105,6 +105,10 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	//HUD
 	PlayerHUDClass = nullptr;
 	PlayerHUD = nullptr;
+
+	LoadingScreenTime = 0.2f;
+	
+	
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -142,10 +146,7 @@ void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurveTimeline.TickTimeline(DeltaTime);
-
-	
-	
+	CurveTimeline.TickTimeline(DeltaTime);		
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -192,6 +193,11 @@ void ADwarfProjectCharacter::SetupPlayer()
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	SprintSpeed = WalkSpeed * 1.8f;
+	if (SpawnSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnSound, GetActorLocation());
+	}
+	
 }
 
 void ADwarfProjectCharacter::EnableMainMenu()
@@ -207,7 +213,7 @@ void ADwarfProjectCharacter::EnableMainMenu()
 
 			if (MainMenu)
 			{
-				MyPlayer->SetPause(true);
+				//MyPlayer->SetPause(true);
 				MyPlayer->bShowMouseCursor = true;
 			}
 		}					
@@ -713,6 +719,21 @@ void ADwarfProjectCharacter::EnableDeathScreen()
 UDwarfHud* ADwarfProjectCharacter::GetPlayerHUD()
 {
 	return PlayerHUD;
+}
+
+void ADwarfProjectCharacter::EnableLoadingScreen()
+{		
+	if (LoadingScreen)
+	{
+		LoadingScreen->AddToViewport();
+		GetWorld()->GetTimerManager().SetTimer(LoadingScreenTimerHandle, this, &ADwarfProjectCharacter::LoadLevel1, LoadingScreenTime, false);
+		
+	}
+}
+
+void ADwarfProjectCharacter::LoadLevel1()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), "Level1");
 }
 
 void ADwarfProjectCharacter::ResetAttackCount()
