@@ -74,16 +74,13 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	
-
 	//Setup values and checks
 	IsDead = false;
 
 	AttackCount = 1;
 	AttackAnimResetTime = 1.5f;
 	CanAttack = true;
-
 	CanDodge = true;
-
 	CanParry = true;
 	ParryActive = false;
 	ParryOnCooldown = false;
@@ -94,21 +91,16 @@ ADwarfProjectCharacter::ADwarfProjectCharacter()
 
 	MovementDisabled = false;
 
-	IsInvincible = false;
-	
+	IsInvincible = false;	
 	IframeTime = 0.3f;
 	
 	SlowdownTimeResetTime = 0.02f;
 
 	SetupStimulusSource();
-
 	//HUD
 	PlayerHUDClass = nullptr;
 	PlayerHUD = nullptr;
-
-	LoadingScreenTime = 0.2f;
-	
-	
+	LoadingScreenTime = 0.2f;		
 }
 
 void ADwarfProjectCharacter::BeginPlay()
@@ -129,7 +121,6 @@ void ADwarfProjectCharacter::BeginPlay()
 	
 	//This is just for development, in release dont set it
 	//GameInstance->SetState(EGameStates::Running);
-
 	switch (GameInstance->GetState())
 	{
 	case EGameStates::Menu:
@@ -159,7 +150,6 @@ void ADwarfProjectCharacter::SetupPlayer()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
 	//Setup Healthbar
@@ -196,8 +186,7 @@ void ADwarfProjectCharacter::SetupPlayer()
 	if (SpawnSound != nullptr)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnSound, GetActorLocation());
-	}
-	
+	}	
 }
 
 void ADwarfProjectCharacter::EnableMainMenu()
@@ -210,7 +199,6 @@ void ADwarfProjectCharacter::EnableMainMenu()
 		if (MainMenu)
 		{
 			MainMenu->AddToViewport();
-
 			if (MainMenu)
 			{
 				//MyPlayer->SetPause(true);
@@ -222,7 +210,6 @@ void ADwarfProjectCharacter::EnableMainMenu()
 
 //////////////////////////////////////////////////////////////////////////
 // Input
-
 void ADwarfProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -280,7 +267,6 @@ void ADwarfProjectCharacter::SetupAlertRadius()
 	{
 		// We need a pointer to the level we want to spawn the Actor in. You can get the persistent level from any Actor or Component with GetWorld()
 		UWorld* MyLevel = GetWorld();
-
 		// You should ensure the level is valid before spawning, or you could crash the engine!
 		// This is important if your spawn code could run from the Editor by any reason.
 		if (IsValid(MyLevel))
@@ -421,7 +407,6 @@ void ADwarfProjectCharacter::DodgeRoll(const FInputActionValue& Value)
 
 void ADwarfProjectCharacter::Parry(const FInputActionValue& Value)
 {
-	//TODO add add visual feedback for parry
 	if (CanParry)
 	{		
 		if (IsValid(ParryMontage))
@@ -485,8 +470,7 @@ void ADwarfProjectCharacter::Pause(const FInputActionValue& Value)
 			PauseMenu = CreateWidget<UPauseMenu>(GetWorld(), PauseMenuClass);
 			if (PauseMenu)
 			{
-				PauseMenu->AddToViewport();
-				
+				PauseMenu->AddToViewport();			
 				if (MyPlayer)
 				{
 					MyPlayer->SetPause(true);
