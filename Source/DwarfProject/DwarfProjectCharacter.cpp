@@ -639,7 +639,11 @@ void ADwarfProjectCharacter::RecieveHealth(float Healing)
 void ADwarfProjectCharacter::Die()
 {
 	IsDead = true;
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
+	if (DeathSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
+	}
+	
 	
 	if (IsHostile)
 	{
