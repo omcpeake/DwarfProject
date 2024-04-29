@@ -120,7 +120,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	}
 	
 	//This is just for development, in release dont set it
-	//GameInstance->SetState(EGameStates::Running);
+	GameInstance->SetState(EGameStates::Running);
 	switch (GameInstance->GetState())
 	{
 	case EGameStates::Menu:
@@ -643,7 +643,6 @@ void ADwarfProjectCharacter::Die()
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
 	}
-	
 	
 	if (IsHostile)
 	{
