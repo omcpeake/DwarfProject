@@ -23,6 +23,7 @@ public:
 
 	void IncrementEnemyCount();
 	void DecrementEnemyCount();
+	int GetEnemyCount();
 };
 
 

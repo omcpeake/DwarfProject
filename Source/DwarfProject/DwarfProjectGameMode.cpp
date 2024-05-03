@@ -24,11 +24,9 @@ ADwarfProjectGameMode::ADwarfProjectGameMode()
 void ADwarfProjectGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 	if (EnemyCount == 0)
-	{
-		
-		
-
+	{			
 		if (DoorOpened)
 			return;
 					
@@ -56,4 +54,9 @@ void ADwarfProjectGameMode::IncrementEnemyCount()
 void ADwarfProjectGameMode::DecrementEnemyCount()
 {
 	EnemyCount--;
+}
+
+int ADwarfProjectGameMode::GetEnemyCount()
+{
+	return EnemyCount;
 }

@@ -120,7 +120,8 @@ void ADwarfProjectCharacter::BeginPlay()
 	}
 	
 	//This is just for development, in release dont set it
-	//GameInstance->SetState(EGameStates::Running);
+	GameInstance->SetState(EGameStates::Running);
+
 	switch (GameInstance->GetState())
 	{
 	case EGameStates::Menu:
@@ -137,7 +138,7 @@ void ADwarfProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurveTimeline.TickTimeline(DeltaTime);		
+	CurveTimeline.TickTimeline(DeltaTime);			
 }
 
 void ADwarfProjectCharacter::SetupPlayer()
@@ -150,6 +151,7 @@ void ADwarfProjectCharacter::SetupPlayer()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	
 	//TODO if saves are added then save the current health to that
 	CurrentHealth = MaxHealth;
 	//Setup Healthbar
@@ -186,7 +188,9 @@ void ADwarfProjectCharacter::SetupPlayer()
 	if (SpawnSound != nullptr)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnSound, GetActorLocation());
-	}	
+	}
+	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));		
+	MyPlayer->bShowMouseCursor = false;
 }
 
 void ADwarfProjectCharacter::EnableMainMenu()
