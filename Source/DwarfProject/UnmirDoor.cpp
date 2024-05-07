@@ -50,8 +50,7 @@ void AUnmirDoor::TimelineProgress(float Value)
 
 void AUnmirDoor::OpenDoor()
 {
-	//only do this in level 1 as this is the only level with a door
-	if (GetLevel()->GetName() == "Level1")
+	if (GetLevel()->GetName() != "MainMenu") //I dont know if this line of code actually does anything
 	{
 		CurveTimeline.PlayFromStart();
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());

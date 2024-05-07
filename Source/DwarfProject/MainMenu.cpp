@@ -28,17 +28,16 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartGameButtonOnClicked()
 {
-	//RemoveFromViewport();	
+
 	UDwarfGameInstance* GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
 	if (GameInstance)
 	{
 		GameInstance->SetState(EGameStates::Running);		
 	}
 
-
 	APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController((GetWorld())));
 	ADwarfProjectCharacter* Player = Cast<ADwarfProjectCharacter>(MyPlayer->GetPawn());
-	Player->EnableLoadingScreen();		
+	Player->EnableLoadingScreen();
 }
 
 

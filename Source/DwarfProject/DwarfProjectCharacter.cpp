@@ -109,6 +109,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	GameInstance = Cast<UDwarfGameInstance>(GetGameInstance());
+	GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (CurveFloat)
 	{
@@ -120,7 +121,7 @@ void ADwarfProjectCharacter::BeginPlay()
 	}
 	
 	//This is just for development, in release dont set it
-	GameInstance->SetState(EGameStates::Running);
+	//GameInstance->SetState(EGameStates::Running);
 
 	switch (GameInstance->GetState())
 	{
@@ -175,12 +176,11 @@ void ADwarfProjectCharacter::SetupPlayer()
 		SetupAlertRadius();
 	}
 	if (IsHostile)
-	{
-		ADwarfProjectGameMode* GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	{		
 		if (GameMode)
 		{
 			GameMode->IncrementEnemyCount();
-		}
+		}		
 	}
 	//Store the walk speed set in the blueprint
 	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -650,7 +650,6 @@ void ADwarfProjectCharacter::Die()
 	
 	if (IsHostile)
 	{
-		ADwarfProjectGameMode* GameMode = Cast<ADwarfProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (GameMode)
 		{
 			GameMode->DecrementEnemyCount();
@@ -717,8 +716,7 @@ void ADwarfProjectCharacter::EnableLoadingScreen()
 	if (LoadingScreen)
 	{
 		LoadingScreen->AddToViewport();
-		GetWorld()->GetTimerManager().SetTimer(LoadingScreenTimerHandle, this, &ADwarfProjectCharacter::LoadLevel1, LoadingScreenTime, false);
-		
+		GetWorld()->GetTimerManager().SetTimer(LoadingScreenTimerHandle, this, &ADwarfProjectCharacter::LoadLevel1, LoadingScreenTime, false);		
 	}
 }
 

@@ -24,6 +24,8 @@ public:
 	void IncrementEnemyCount();
 	void DecrementEnemyCount();
 	int GetEnemyCount();
+
+	void CheckForDoorsToOpen();
 };
 
 

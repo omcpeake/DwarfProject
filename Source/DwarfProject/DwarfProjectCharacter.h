@@ -10,6 +10,7 @@
 #include "EGameStates.h"
 #include "Components/TimelineComponent.h"
 #include "DwarfGameInstance.h"
+#include "DwarfProjectGameMode.h"
 
 #include "DwarfProjectCharacter.generated.h"
 
@@ -66,6 +67,7 @@ class ADwarfProjectCharacter : public ACharacter
 private:
 
 	UDwarfGameInstance* GameInstance;
+	ADwarfProjectGameMode* GameMode;
 
 	//Custom Properties
 	bool CanAttack;
@@ -178,16 +180,18 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UDeathScreen> DeathScreenClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	class UUserWidget* CreditsScreen;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	class UUserWidget* LoadingScreen;
+
 	UPROPERTY()
 	class UDeathScreen* DeathScreen;
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UCameraShakeBase> OnDamageCamShake;
 
-	UPROPERTY(EditAnywhere, Category = "UI")
-	class UUserWidget* CreditsScreen;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	class UUserWidget* LoadingScreen;
+	
 	FTimerHandle LoadingScreenTimerHandle;
 	float LoadingScreenTime;
 

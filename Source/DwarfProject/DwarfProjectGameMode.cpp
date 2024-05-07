@@ -25,25 +25,7 @@ void ADwarfProjectGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (EnemyCount == 0)
-	{			
-		if (DoorOpened)
-			return;
-					
-		TSubclassOf<AUnmirDoor> classToFind;
-		classToFind = AUnmirDoor::StaticClass();
-		TArray<AActor*> foundEnemies;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), classToFind, foundEnemies);
-		for (AActor* actor : foundEnemies)
-		{
-			AUnmirDoor* door = Cast<AUnmirDoor>(actor);
-			if (door)
-			{
-				door->OpenDoor();
-				DoorOpened = true;
-			}
-		}
-	}
+	
 }
 
 void ADwarfProjectGameMode::IncrementEnemyCount()
@@ -54,9 +36,35 @@ void ADwarfProjectGameMode::IncrementEnemyCount()
 void ADwarfProjectGameMode::DecrementEnemyCount()
 {
 	EnemyCount--;
+	if (EnemyCount <= 0)
+	{
+		if (DoorOpened == false)
+		{
+			CheckForDoorsToOpen();
+		}
+		
+	}
+		
 }
 
 int ADwarfProjectGameMode::GetEnemyCount()
 {
 	return EnemyCount;
+}
+
+void ADwarfProjectGameMode::CheckForDoorsToOpen()
+{
+	TSubclassOf<AUnmirDoor> classToFind;
+	classToFind = AUnmirDoor::StaticClass();
+	TArray<AActor*> foundEnemies;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), classToFind, foundEnemies);
+	for (AActor* actor : foundEnemies)
+	{
+		AUnmirDoor* door = Cast<AUnmirDoor>(actor);
+		if (door)
+		{
+			door->OpenDoor();
+			DoorOpened = true;
+		}
+	}
 }
