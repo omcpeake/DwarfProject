@@ -1,2 +1,2 @@
 # DwarfProject
- funny dwarf game
+ short dwarf game
